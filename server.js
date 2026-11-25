@@ -2198,6 +2198,10 @@ app.post('/api/launch-bot-dashboard', async (req, res) => {
   }
 });
 
+// 🔒 সব ইউজার ড্যাশবোর্ড API ও পেয়ারিং কোড মালিকানা সুরক্ষা
+app.use('/api/user', requireBotOwner);
+app.use('/api/request-pairing-code', requireBotOwner);
+
 // ২. ড্যাশবোর্ডের লাইভ লগ ও স্ট্যাটস
 app.get('/api/user/bot-logs', async (req, res) => {
   const botId = Number(req.query.botId);
