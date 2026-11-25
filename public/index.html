@@ -34,7 +34,6 @@
         }
         .container { max-width: 1020px; margin: 0 auto; }
 
-        /* Sticky Glass Header */
         .glass-header {
             position: sticky; top: 12px; z-index: 50;
             background: rgba(255, 255, 255, 0.75);
@@ -65,11 +64,9 @@
         }
         .btn-nav:hover { background: #fff; border-color: var(--primary); color: var(--primary); }
 
-        /* Main Layout Grid */
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-bottom: 24px; }
         @media (min-width: 840px) { .main-grid { grid-template-columns: 1.25fr 0.95fr; align-items: start; } }
 
-        /* Glass Card */
         .card {
             background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border); border-radius: 22px; padding: 26px;
@@ -134,7 +131,6 @@
         .feedback-success { background: rgba(220, 252, 231, 0.92); border: 1px solid #86efac; color: #065f46; }
         .feedback-error { background: rgba(254, 226, 226, 0.92); border: 1px solid #fca5a5; color: #b91c1c; }
 
-        /* Stores Showcase Grid */
         .stores-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 14px;
         }
@@ -163,7 +159,6 @@
 <body>
 
 <div class="container">
-    <!-- Sticky Frosted Glass Header (NO Super Admin button) -->
     <header class="glass-header">
         <a href="/" class="brand">
             <span class="brand-icon"><i class="ti ti-brand-whatsapp"></i></span>
@@ -176,7 +171,6 @@
     </header>
 
     <div class="main-grid">
-        <!-- Left: Hero + One-Click Shop & Bot Builder -->
         <section class="card">
             <span class="hero-badge"><i class="ti ti-sparkles"></i> ১ ক্লিকে ই-কমার্স শপ + WhatsApp AI বট</span>
             <h1>নিজের অনলাইন শপ ও AI সেলস অ্যাসিস্ট্যান্ট তৈরি করুন</h1>
@@ -196,7 +190,7 @@
 
                 <div class="form-group" id="catalogUrlGroup">
                     <label>ক্যাটালগ লিংক (ঐচ্ছিক — ড্যাশবোর্ড থেকেও পণ্য যোগ করা যাবে):</label>
-                    <input type="text" id="catalogUrl" placeholder="যেমন: https://sojib.de5.net/catalog/myshop">
+                    <input type="text" id="catalogUrl" placeholder="যেমন: https://busness-bot.onrender.com/catalog/ss">
                     <small style="display:block; margin-top:5px; color:#059669; font-weight:700; font-size:12px;">
                         👉 ক্যাটালগ লিংক নেই? <a href="/catalog-builder" target="_blank" style="color:#047857; text-decoration:underline;">২ মিনিটে ক্যাটালগ তৈরি করুন</a>
                     </small>
@@ -224,16 +218,13 @@
                     </div>
                     <div class="form-group">
                         <label>ডোমেইন নির্বাচন করুন:</label>
-                        <select id="baseDomain" onchange="updateUrlPreview()">
-                            <option value="sojib.de5.net">sojib.de5.net</option>
-                        </select>
+                        <select id="baseDomain" onchange="updateUrlPreview()"></select>
                     </div>
                 </div>
 
-                <!-- Live URL Preview -->
                 <div class="url-preview-box">
-                    🛍️ <b>আপনার শপ লিংক হবে:</b> <code id="previewShopUrl">https://sojib.de5.net/myshop</code><br>
-                    🎛️ <b>ওনার ড্যাশবোর্ড হবে:</b> <code id="previewDashUrl">https://sojib.de5.net/dash/myshop</code>
+                    🛍️ <b>আপনার শপ লিংক হবে:</b> <code id="previewShopUrl"></code><br>
+                    🎛️ <b>ওনার ড্যাশবোর্ড হবে:</b> <code id="previewDashUrl"></code>
                 </div>
 
                 <button type="submit" id="btnSubmit" class="btn-primary">
@@ -244,7 +235,6 @@
             <div id="resultBox" class="feedback-box"></div>
         </section>
 
-        <!-- Right: AI Website Link Analyzer Card -->
         <aside class="card">
             <h2><i class="ti ti-world-search"></i> AI Website Link Analyzer</h2>
             <p class="lead" style="margin-bottom:14px;">
@@ -272,7 +262,6 @@
         </aside>
     </div>
 
-    <!-- Active Stores Showcase Grid -->
     <section class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <h2 style="margin:0;"><i class="ti ti-building-store"></i> অ্যাক্টিভ শপ শোকেস (Active Stores)</h2>
@@ -291,6 +280,8 @@
 </div>
 
 <script>
+    const CURRENT_HOST = window.location.host.replace(/^www\./, '').toLowerCase();
+
     function escapeHtml(str) {
         if (str === null || str === undefined) return '';
         return String(str)
@@ -326,20 +317,25 @@
 
     function updateUrlPreview() {
         const slug = (document.getElementById('subdomain').value || 'myshop').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'myshop';
-        const dom = document.getElementById('baseDomain').value || 'sojib.de5.net';
+        const dom = document.getElementById('baseDomain').value || CURRENT_HOST;
         document.getElementById('previewShopUrl').textContent = `https://${dom}/${slug}`;
         document.getElementById('previewDashUrl').textContent = `https://${dom}/dash/${slug}`;
     }
 
+    // ডিফল্ট ডোমেইন হিসেবে বর্তমান হোস্ট + অ্যাডমিন প্যানেল থেকে যুক্ত করা ডোমেইনগুলো লোড
     async function loadActiveDomains() {
+        const select = document.getElementById('baseDomain');
+        select.innerHTML = `<option value="${escapeHtml(CURRENT_HOST)}" selected>${escapeHtml(CURRENT_HOST)} (Default)</option>`;
+        updateUrlPreview();
+
         try {
             const res = await fetch('/api/domains/active');
             const d = await res.json();
             if (d.success && Array.isArray(d.domains) && d.domains.length > 0) {
-                const select = document.getElementById('baseDomain');
-                const currentHost = window.location.hostname.replace(/^www\./, '').toLowerCase();
-                select.innerHTML = d.domains.map(dom =>
-                    `<option value="${escapeHtml(dom)}" ${dom === currentHost ? 'selected' : ''}>${escapeHtml(dom)}</option>`
+                const defaultDom = (d.defaultDomain || CURRENT_HOST).toLowerCase();
+                const uniqueList = Array.from(new Set([defaultDom, ...d.domains].filter(Boolean)));
+                select.innerHTML = uniqueList.map((dom, idx) =>
+                    `<option value="${escapeHtml(dom)}" ${idx === 0 ? 'selected' : ''}>${escapeHtml(dom)}${idx === 0 ? ' (Default)' : ''}</option>`
                 ).join('');
                 updateUrlPreview();
             }
@@ -361,7 +357,7 @@
             }
 
             container.innerHTML = stores.map(s => {
-                const dom = s.base_domain || 'sojib.de5.net';
+                const dom = s.base_domain || CURRENT_HOST;
                 const sub = s.subdomain || '';
                 const url = `https://${dom}/${sub}`;
                 return `
@@ -434,7 +430,7 @@
             catalog_url: document.getElementById('catalogUrl').value.trim(),
             custom_info: document.getElementById('manualDetails').value.trim(),
             subdomain: document.getElementById('subdomain').value.trim(),
-            base_domain: document.getElementById('baseDomain').value
+            base_domain: document.getElementById('baseDomain').value || CURRENT_HOST
         };
 
         try {
@@ -470,7 +466,6 @@
 
     loadActiveDomains();
     loadPublicStores();
-    updateUrlPreview();
 </script>
 </body>
 </html>
