@@ -1,3 +1,4 @@
+
 /**
  * FreeSite SaaS — Master Server (Security Hardened + Dynamic Domain /myshop Router + Glassmorphism UI)
  * Architect: Sojib | WhatsApp: 01409084819 | TikTok: @sojib..music
@@ -127,8 +128,8 @@ const activeSockets = new Map();
 const botChatHistories = new Map();
 const botLiveLogs = new Map();
 
-// ডায়নামিক ডোমেইন ক্যাশ (যাতে প্রতি রিকোয়েস্টে ডাটাবেজ চাপ না পড়ে)
-let cachedActiveDomains = ['sojib.de5.net', 'sojub.cc.cd'];
+// ডায়নামিক ডোমেইন ক্যাশ (অ্যাডমিন প্যানেল থেকে যুক্ত ডোমেইনসমূহ)
+let cachedActiveDomains = [];
 let lastDomainFetch = 0;
 
 async function getActivePlatformDomains() {
@@ -138,8 +139,7 @@ async function getActivePlatformDomains() {
   }
   try {
     const res = await pool.query('SELECT domain_name FROM platform_domains WHERE is_active = TRUE ORDER BY id ASC');
-    const dbDomains = res.rows.map(r => r.domain_name.toLowerCase().trim()).filter(Boolean);
-    cachedActiveDomains = Array.from(new Set([...dbDomains, 'sojib.de5.net', 'sojub.cc.cd']));
+    cachedActiveDomains = res.rows.map(r => r.domain_name.toLowerCase().trim()).filter(Boolean);
     lastDomainFetch = now;
   } catch (e) {}
   return cachedActiveDomains;
@@ -219,15 +219,14 @@ app.use(async (req, res, next) => {
   const host = rawHost.toLowerCase().split(':')[0].trim().replace(/^www\./, '');
   const activeDomains = await getActivePlatformDomains();
 
-  // রিকোয়েস্ট করা হোস্টটি অ্যাডমিনের যুক্ত করা কোনো ডোমেইন কি না তা যাচাই
   let matchedBaseDomain = activeDomains.find(d => host === d || host.endsWith('.' + d)) || host;
 
   let detectedSub = req.query.sub ? String(req.query.sub).trim().toLowerCase() : null;
-  let detectedBase = matchedBaseDomain || 'sojib.de5.net';
+  let detectedBase = matchedBaseDomain || host || 'busness-bot.onrender.com';
   let isDirectShopPath = false;
   let nestedProductId = null;
 
-  // ১. সাবডোমেইন ভিত্তিক ডিটেকশন (যেমন: myshop.domain.com)
+  // ১. সাবডোমেইন ভিত্তিক ডিটেকশন (যেমন: myshop.yourdomain.com)
   for (const base of activeDomains) {
     if (host.endsWith('.' + base) && host !== base) {
       detectedSub = host.slice(0, -(base.length + 1)).trim().toLowerCase();
@@ -236,7 +235,7 @@ app.use(async (req, res, next) => {
     }
   }
 
-  // ২. পাথ ভিত্তিক ডিটেকশন (যেমন: domain.com/dash/myshop অথবা domain.com/myshop অথবা domain.com/myshop/p/15)
+  // ২. পাথ ভিত্তিক ডিটেকশন (যেমন: yourdomain.com/dash/myshop অথবা yourdomain.com/myshop অথবা yourdomain.com/myshop/p/15)
   const segments = req.path.split('/').filter(Boolean);
   if (segments[0] === 'dash' && segments[1]) {
     detectedSub = segments[1].toLowerCase().trim();
@@ -271,12 +270,10 @@ app.use(async (req, res, next) => {
         const bot = botRes.rows[0];
         const effectiveDomain = host || bot.base_domain || detectedBase;
 
-        // 🛠️ ক্যাটালগ বিল্ডার
         if (req.path === '/catalog-builder' || (isDirectShopPath && segments[1] === 'catalog-builder')) {
           return res.sendFile(path.join(__dirname, 'public', 'catalog_builder.html'));
         }
 
-        // 🔗 প্রোডাক্ট ডিটেইল পেজ (/p/15 অথবা /myshop/p/15)
         const targetProductId = nestedProductId || (req.path.startsWith('/p/') ? parseInt(req.path.replace('/p/', ''), 10) : null);
         if (targetProductId && !isNaN(targetProductId)) {
           const singleP = await pool.query('SELECT * FROM bot_products WHERE id = $1 AND bot_id = $2', [targetProductId, bot.id]);
@@ -285,7 +282,6 @@ app.use(async (req, res, next) => {
           }
         }
 
-        // 🛍️ কাস্টমার শপ ভিউ (domain.com/myshop অথবা sub.domain.com/shop)
         if (
           isDirectShopPath ||
           req.path === '/shop' ||
@@ -296,7 +292,6 @@ app.use(async (req, res, next) => {
           return res.send(generateStorefrontView(bot, prods.rows, `${effectiveDomain}/${cleanSub}`, cleanSub, effectiveDomain));
         }
 
-        // 🎛️ স্টোর ওনার ড্যাশবোর্ড (/dash/myshop অথবা sub.domain.com)
         const pNumRes = await pool.query("SELECT key, value FROM admin_settings WHERE key IN ('bkash_no', 'nagad_no', 'rocket_no')");
         const payConfig = {};
         pNumRes.rows.forEach(r => { payConfig[r.key] = r.value; });
@@ -428,7 +423,7 @@ function generateSingleProductPage(bot, p, domain, slug) {
 }
 
 // ================= পাবলিক কাস্টমার স্টোরফ্রন্ট (Frosted Glassmorphism) =================
-function generateStorefrontView(bot, products, fullUrl, slug = '', domain = 'sojib.de5.net') {
+function generateStorefrontView(bot, products, fullUrl, slug = '', domain = '') {
   const primaryColor = /^#[0-9a-fA-F]{3,6}$/.test(bot.theme_color || '') ? bot.theme_color : '#059669';
   const safePhone = String(bot.phone_number || '').replace(/[^0-9]/g, '');
   const storeSlug = slug || bot.subdomain || bot.catalog_slug || 'shop';
@@ -746,7 +741,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </span>
   </div>
 
-  <!-- Stats Grid -->
   <div class="stats-grid">
     <div class="stat-box"><div class="stat-lbl">মোট টোকেন</div><div class="stat-val" id="tokenVal">${Number(bot.tokens_used || 0)}</div></div>
     <div class="stat-box"><div class="stat-lbl">আজকের মেসেজ</div><div class="stat-val" id="reqVal">${Number(bot.requests_today || 0)}</div></div>
@@ -754,7 +748,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     <div class="stat-box"><div class="stat-lbl">প্যাকেজ</div><div class="stat-val" style="font-size:16px; color:#0284c7;">${escapeHtml(bot.package_name || 'Free Trial')}</div></div>
   </div>
 
-  <!-- Navigation Tabs -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchDashTab('pane-wa', this)"><i class="ti ti-brand-whatsapp"></i> WhatsApp & AI টেস্ট</button>
     <button class="tab-btn" onclick="switchDashTab('pane-products', this)"><i class="ti ti-box"></i> প্রোডাক্ট ও শপ</button>
@@ -762,7 +755,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     <button class="tab-btn" onclick="switchDashTab('pane-billing', this)"><i class="ti ti-crown"></i> প্রিমিয়াম ও API Key</button>
   </div>
 
-  <!-- TAB 1: WhatsApp + Live Test + Terminal -->
   <div id="pane-wa" class="dash-pane">
     <div class="card">
       <h3><i class="ti ti-qrcode"></i> WhatsApp লিঙ্ক করুন (Pairing Code)</h3>
@@ -807,7 +799,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </div>
   </div>
 
-  <!-- TAB 2: Products & Storefront Links -->
   <div id="pane-products" class="dash-pane" style="display:none;">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
@@ -875,7 +866,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </div>
   </div>
 
-  <!-- TAB 3: Settings & AI Analyzer -->
   <div id="pane-settings" class="dash-pane" style="display:none;">
     <div class="card">
       <h3><i class="ti ti-edit"></i> বটের তথ্য ও ওয়েবসাইট অ্যানালাইজার</h3>
@@ -946,7 +936,6 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </div>
   </div>
 
-  <!-- TAB 4: Billing & Gemini Multi-Key -->
   <div id="pane-billing" class="dash-pane" style="display:none;">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -1614,7 +1603,6 @@ async function startTenantBot(botId) {
         if (!text && !isImage) return;
         if (text) addBotLog(botId, 'info', `📩 [${cleanSender}]: "${text}"`);
 
-        // সর্বশেষ বট ডাটা আনা যাতে লাইভ সেটিংস পরিবর্তন সাথে সাথে কাজ করে
         const latestBotRes = await pool.query('SELECT * FROM whatsapp_bots WHERE id = $1', [botId]);
         const currentBotRow = latestBotRes.rows[0] || botRow;
 
@@ -1684,35 +1672,40 @@ async function startTenantBot(botId) {
 
 // ================= PUBLIC API ENDPOINTS =================
 
-// 🌐 পাবলিক অ্যাক্টিভ ডোমেইন লিস্ট (index.html ড্রপডাউনের জন্য)
+// 🌐 পাবলিক অ্যাক্টিভ ডোমেইন লিস্ট (বর্তমান হোস্ট ডিফল্ট + অ্যাডমিন থেকে যুক্ত ডোমেইন)
 app.get('/api/domains/active', async (req, res) => {
+  const currentHost = (req.headers['x-forwarded-host'] || req.headers.host || 'busness-bot.onrender.com')
+    .toLowerCase().split(':')[0].trim().replace(/^www\./, '');
   try {
-    const domains = await getActivePlatformDomains();
-    res.json({ success: true, domains });
+    const dbDomains = await getActivePlatformDomains();
+    const domains = Array.from(new Set([currentHost, ...dbDomains].filter(Boolean)));
+    res.json({ success: true, defaultDomain: currentHost, domains });
   } catch (e) {
-    res.json({ success: true, domains: ['sojib.de5.net', 'sojub.cc.cd'] });
+    res.json({ success: true, defaultDomain: currentHost, domains: [currentHost] });
   }
 });
 
-// 🛍️ পাবলিক অ্যাক্টিভ স্টোরস শোকেস (index.html-এর জন্য, কোনো সেন্সিটিভ তথ্য ছাড়াই)
+// 🛍️ পাবলিক অ্যাক্টিভ স্টোরস শোকেস
 app.get('/api/public/stores', async (req, res) => {
+  const currentHost = (req.headers['x-forwarded-host'] || req.headers.host || 'busness-bot.onrender.com')
+    .toLowerCase().split(':')[0].trim().replace(/^www\./, '');
   try {
     const stores = await pool.query(`
-      SELECT b.bot_name, b.subdomain, COALESCE(b.base_domain, h.base_domain, 'sojib.de5.net') AS base_domain,
+      SELECT b.bot_name, b.subdomain, COALESCE(NULLIF(b.base_domain, ''), NULLIF(h.base_domain, ''), $1) AS base_domain,
              b.bot_type, COALESCE(h.theme_color, '#059669') AS theme_color,
              (SELECT COUNT(*) FROM bot_products p WHERE p.bot_id = b.id) AS product_count
       FROM whatsapp_bots b
       LEFT JOIN hosted_websites h ON b.id = h.bot_id
       WHERE b.subdomain IS NOT NULL AND b.subdomain != ''
       ORDER BY b.id DESC LIMIT 12
-    `);
+    `, [currentHost]);
     res.json({ success: true, stores: stores.rows });
   } catch (e) {
     res.json({ success: true, stores: [] });
   }
 });
 
-// 🔍 পাবলিক AI ওয়েবসাইট লিংক অ্যানালাইজার (index.html-এর জন্য প্রিভিউ)
+// 🔍 পাবলিক AI ওয়েবসাইট লিংক অ্যানালাইজার
 app.post('/api/public/analyze-site', async (req, res) => {
   try {
     const { website_url } = req.body;
@@ -1756,7 +1749,7 @@ app.post('/api/catalog/save', async (req, res) => {
       WHERE bp.name = sci.name AND sci.catalog_slug = $1
     `, [cleanSlug]);
 
-    const rawHost = (req.get('host') || 'sojib.de5.net').split(':')[0];
+    const rawHost = (req.headers['x-forwarded-host'] || req.get('host') || 'busness-bot.onrender.com').split(':')[0];
     const catalogUrl = `https://${rawHost}/catalog/${cleanSlug}`;
     res.json({ success: true, catalog_url: catalogUrl, slug: cleanSlug });
   } catch (err) {
@@ -1797,7 +1790,7 @@ app.get('/c/:slug/:id', async (req, res) => {
 
     const item = itemRes.rows[0];
     const store = cat.rows[0];
-    const host = (req.get('host') || 'sojib.de5.net').split(':')[0];
+    const host = (req.headers['x-forwarded-host'] || req.get('host') || 'busness-bot.onrender.com').split(':')[0];
     const pseudoBot = { bot_name: store.store_name, phone_number: '', theme_color: '#059669' };
     return res.send(generateSingleProductPage(pseudoBot, item, host, `catalog/${cleanSlug}`));
   } catch (e) {
@@ -1811,7 +1804,7 @@ app.get('/catalog/:slug', async (req, res) => {
     const rawSlug = req.params.slug ? req.params.slug.toLowerCase().trim() : '';
     if (!rawSlug) return res.status(404).send('<h2>ক্যাটালগ পাওয়া যায়নি!</h2>');
 
-    const host = (req.get('host') || 'sojib.de5.net').split(':')[0];
+    const host = (req.headers['x-forwarded-host'] || req.get('host') || 'busness-bot.onrender.com').split(':')[0];
     const altSlug = rawSlug.includes('diamond')
       ? rawSlug.replace('diamond', 'daimond')
       : (rawSlug.includes('daimond') ? rawSlug.replace('daimond', 'diamond') : rawSlug);
@@ -1845,7 +1838,7 @@ app.get('/catalog/:slug', async (req, res) => {
   }
 });
 
-// ১. বট ও স্টোর তৈরি (ডোমেইন ভ্যালিডেশন ও ডাইরেক্ট /myshop লিংক সহ)
+// ১. বট ও স্টোর তৈরি (বর্তমান হোস্ট বা অ্যাডমিন-যুক্ত ডোমেইনে /myshop)
 app.post('/api/launch-bot-dashboard', async (req, res) => {
   try {
     const { bot_type, bot_name, website_url, catalog_url, custom_info, subdomain, base_domain } = req.body;
@@ -1858,15 +1851,17 @@ app.post('/api/launch-bot-dashboard', async (req, res) => {
       return res.status(400).json({ success: false, message: 'এই নামটি সিস্টেমের জন্য সংরক্ষিত। অন্য নাম দিন।' });
     }
 
-    // ডুপ্লিকেট শপ স্লাগ চেক
     const dupCheck = await pool.query('SELECT id FROM whatsapp_bots WHERE LOWER(subdomain) = $1', [cleanSub]);
     if (dupCheck.rows.length > 0) {
       return res.status(400).json({ success: false, message: `⚠️ "${cleanSub}" নামটি ইতিমধ্যে ব্যবহৃত হয়েছে! অন্য একটি নাম দিন।` });
     }
 
+    const currentHost = (req.headers['x-forwarded-host'] || req.headers.host || 'busness-bot.onrender.com')
+      .toLowerCase().split(':')[0].trim().replace(/^www\./, '');
     const activeDomains = await getActivePlatformDomains();
+    const allowedDomains = Array.from(new Set([currentHost, ...activeDomains].filter(Boolean)));
     const chosenDomain = String(base_domain || '').toLowerCase().trim();
-    const finalDomain = activeDomains.includes(chosenDomain) ? chosenDomain : (activeDomains[0] || 'sojib.de5.net');
+    const finalDomain = allowedDomains.includes(chosenDomain) ? chosenDomain : currentHost;
 
     let finalPrompt = custom_info || '';
     let extractedProducts = [];
@@ -2090,8 +2085,10 @@ app.post('/api/user/products/add', async (req, res) => {
       finalImgUrl = await uploadToImgBB(finalImgUrl, botRow.rows[0].imgbb_api_key);
     }
 
+    const currentHost = (req.headers['x-forwarded-host'] || req.headers.host || 'busness-bot.onrender.com')
+      .toLowerCase().split(':')[0].trim().replace(/^www\./, '');
     const sub = botRow.rows[0].subdomain || 'shop';
-    const dom = botRow.rows[0].base_domain || 'sojib.de5.net';
+    const dom = botRow.rows[0].base_domain || currentHost;
     const safeBuyLink = sanitizeUrl(buy_link);
 
     const inserted = await pool.query(
@@ -2247,7 +2244,6 @@ async function getMasterAdminPassword() {
   return (dbPass.rows[0]?.value || process.env.ADMIN_PASSWORD || '@1234567890@sojib@1234567890@sojib#').trim();
 }
 
-// 🔐 সব অ্যাডমিন রাউটের জন্য বাধ্যতামূলক সিকিউরিটি গার্ড
 async function checkAdminAuth(req, res, next) {
   try {
     const cookiePass = parseAdminCookie(req);
@@ -2292,7 +2288,6 @@ app.post('/api/admin/logout', (req, res) => {
   res.json({ success: true, message: 'লগআউট সম্পন্ন।' });
 });
 
-// 🔒 সুপার অ্যাডমিন পেজ ভিউয়ার
 app.get('/admin', async (req, res) => {
   try {
     const cookiePass = parseAdminCookie(req);
@@ -2367,7 +2362,6 @@ app.get('/admin', async (req, res) => {
 </html>`);
 });
 
-// 🔒 সব অ্যাডমিন API (100% checkAdminAuth দিয়ে সুরক্ষিত)
 app.get('/api/admin/overview', checkAdminAuth, async (req, res) => {
   try {
     const bots = await pool.query('SELECT * FROM whatsapp_bots ORDER BY id DESC');
@@ -2379,7 +2373,6 @@ app.get('/api/admin/overview', checkAdminAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ success: false }); }
 });
 
-// 🌐 ডোমেইন ম্যানেজমেন্ট API (Main Admin থেকে ডোমেইন অ্যাড, টগল ও ডিলিট)
 app.get('/api/admin/domains', checkAdminAuth, async (req, res) => {
   try {
     const domains = await pool.query('SELECT * FROM platform_domains ORDER BY id DESC');
@@ -2408,7 +2401,7 @@ app.post('/api/admin/domains', checkAdminAuth, async (req, res) => {
       [domain_name, notes || '']
     );
 
-    lastDomainFetch = 0; // ক্যাশ রিফ্রেশ
+    lastDomainFetch = 0;
     res.json({
       success: true,
       message: `✅ ডোমেইন "${domain_name}" যুক্ত হয়েছে! এখন https://${domain_name}/myshop এ শপ ওপেন হবে।`,
@@ -2437,7 +2430,6 @@ app.post('/api/admin/domains/delete', checkAdminAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
 
-// 🔑 Cloud API অ্যাপ্লিকেশন ম্যানেজমেন্ট (Admin Protected)
 app.get('/api/admin/applications', checkAdminAuth, async (req, res) => {
   try {
     const apps = await pool.query('SELECT id, app_name, app_id, permissions, status, request_count, last_access_at, created_at FROM api_applications ORDER BY id DESC');
@@ -2657,7 +2649,6 @@ app.get('/ping', async (req, res) => {
   });
 });
 
-// মূল ডোমেইনে ক্রিয়েটর ও ল্যান্ডিং পেজ
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 // সার্ভার চালু ও স্কিমা ইনিশিয়ালাইজেশন
@@ -2734,7 +2725,7 @@ app.listen(PORT, '0.0.0.0', async () => {
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS trial_used BOOLEAN DEFAULT FALSE;
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS trial_expires_at TIMESTAMP;
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS subdomain VARCHAR(100);
-      ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS base_domain VARCHAR(150) DEFAULT 'sojib.de5.net';
+      ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS base_domain VARCHAR(150);
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS bot_type VARCHAR(50) DEFAULT 'catalog_link';
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS tokens_used INT DEFAULT 0;
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS requests_today INT DEFAULT 0;
@@ -2758,13 +2749,6 @@ app.listen(PORT, '0.0.0.0', async () => {
     `);
 
     await pool.query(`
-      INSERT INTO platform_domains (domain_name, is_active, notes) VALUES
-      ('sojib.de5.net', TRUE, 'Primary Platform Domain'),
-      ('sojub.cc.cd', TRUE, 'Secondary Platform Domain')
-      ON CONFLICT (domain_name) DO NOTHING;
-    `);
-
-    await pool.query(`
       INSERT INTO admin_settings (key, value) VALUES 
       ('bkash_no', '01409084819'),
       ('nagad_no', '01409084819'),
@@ -2783,4 +2767,4 @@ app.listen(PORT, '0.0.0.0', async () => {
     console.error('[STARTUP INIT ERROR]:', e.message);
   }
 });
-
+m
