@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রোডাক্ট ক্যাটালগ ও ওনার পোর্টাল — FreeSite by Sojib</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-deep: #065f46;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-subtle: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.85);
+            --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text);
+            padding: 18px 14px;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .container { max-width: 760px; margin: 0 auto; }
+
+        /* Sticky Glass Header */
+        .glass-header {
+            position: sticky; top: 12px; z-index: 40;
+            background: rgba(255, 255, 255, 0.76); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 18px; padding: 14px 20px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+            margin-bottom: 20px; box-shadow: var(--glass-shadow);
+        }
+        .brand { font-size: 18px; font-weight: 800; color: var(--primary-deep); display: flex; align-items: center; gap: 8px; }
+        .pill-badge {
+            padding: 6px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
+            background: rgba(220, 252, 231, 0.85); color: #15803d; border: 1px solid #bbf7d0; text-decoration: none;
+        }
+
+        .card {
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px;
+            margin-bottom: 20px; box-shadow: var(--glass-shadow);
+        }
+        h2, h3 { font-size: 17px; font-weight: 800; color: var(--primary-deep); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12.5px; color: #334155; margin-bottom: 6px; font-weight: 700; }
+        input, textarea, select {
+            width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 12px; font-size: 14px;
+            color: var(--text); outline: none; transition: .2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            background: #fff; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 540px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        .btn-primary {
+            width: 100%; padding: 13px 18px;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 12px;
+            font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            gap: 8px; font-size: 14px; box-shadow: 0 8px 20px rgba(5, 150, 105, 0.28); transition: .2s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(5, 150, 105, 0.38); }
+
+        .img-preview-box {
+            width: 100%; min-height: 110px; border: 2px dashed #059669; border-radius: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; background: rgba(240, 253, 244, 0.72); padding: 10px; text-align: center;
+        }
+        .img-preview-box img.single-prev { max-height: 96px; max-width: 100%; object-fit: contain; border-radius: 8px; }
+
+        .product-item {
+            background: var(--glass-subtle); backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 16px;
+            padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .product-img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(226, 232, 240, 0.9); background: #fff; }
+        .link-box {
+            background: rgba(240, 253, 244, 0.92); border: 2px dashed #059669; color: #065f46;
+            padding: 18px; border-radius: 16px; text-align: center; display: none; margin-top: 18px;
+        }
+        .toast {
+            display: none; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; font-weight: 700;
+            background: rgba(220, 252, 231, 0.95); color: #15803d; border: 1px solid #86efac;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="glass-header">
+        <div class="brand"><i class="ti ti-building-store" style="color:#059669; font-size:22px;"></i> প্রোডাক্ট ক্যাটালগ বিল্ডার</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <span class="pill-badge">● Auto Draft Saved</span>
+            <a href="/" class="pill-badge" style="background:rgba(255,255,255,0.85); color:#0f172a; border-color:#cbd5e1;">🏠 হোম</a>
+        </div>
+    </header>
+
+    <div id="toastMsg" class="toast"></div>
+
+    <!-- স্টোর প্রোফাইল -->
+    <div class="card">
+        <h2><i class="ti ti-id-badge-2"></i> শপ প্রোফাইল ও লিংক কনফিগার</h2>
+        <p style="font-size:12.5px; color:var(--muted); margin-bottom:14px;">একবার লিখে সেভ করলে রিফ্রেশ দিলেও তথ্য মুছবে না।</p>
+
+        <div class="form-group">
+            <label>দোকান / ব্যবসার নাম:</label>
+            <input type="text" id="storeName" placeholder="যেমন: Diamond Ghor" oninput="saveDraft()">
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>ক্যাটালগ স্লাগ কোড (Slug):</label>
+                <input type="text" id="catalogSlug" placeholder="যেমন: diamondghor" oninput="saveDraft(); tryRestoreFromSlug();">
+            </div>
+            <div class="form-group">
+                <label>অ্যাডমিন পিন (PIN):</label>
+                <input type="password" id="adminPin" placeholder="1234" value="1234" oninput="saveDraft()">
+            </div>
+        </div>
+    </div>
+
+    <!-- নতুন পণ্য যোগ ও এডিট ফর্ম -->
+    <div class="card" id="formCard">
+        <h3 id="formHeading"><i class="ti ti-plus"></i> নতুন পণ্য যোগ করুন</h3>
+
+        <div class="form-group">
+            <label>পণ্যের নাম:</label>
+            <input type="text" id="pName" placeholder="যেমন: T900 Ultra Smart Watch">
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>মূল্য (৳ টাকা):</label>
+                <input type="number" id="pPrice" placeholder="যেমন: 1250">
+            </div>
+            <div class="form-group">
+                <label>ক্যাটাগরি:</label>
+                <div style="display:flex; gap:6px;">
+                    <select id="pCategorySelect" onchange="onCategorySelect(this)" style="display:none; max-width:48%;">
+                        <option value="">-- সিলেক্ট --</option>
+                    </select>
+                    <input type="text" id="pCategory" placeholder="যেমন: ঘড়ি / গ্যাজেট" style="flex:1;">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:15px;">
+            <div>
+                <label>📸 ১. পণ্যের মূল ছবি (Main Picture):</label>
+                <div class="img-preview-box" onclick="document.getElementById('pImgFile').click()">
+                    <span id="imgUploadText" style="font-size:12.5px; color:#047857; font-weight:700;"><i class="ti ti-camera"></i> মূল ছবি আপলোড করুন</span>
+                    <img id="imgPreview" class="single-prev" style="display:none;">
+                </div>
+                <input type="file" id="pImgFile" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+            </div>
+
+            <div>
+                <label style="color:#3730a3;">📸 ২. ডেমো ছবি গ্যালারি (সর্বোচ্চ ৮টি):</label>
+                <div class="img-preview-box" style="border-color:#6366f1; background:rgba(238,242,255,0.75);" onclick="document.getElementById('pDemoImgFile').click()">
+                    <span id="demoImgUploadText" style="font-size:12.5px; color:#4f46e5; font-weight:700;"><i class="ti ti-sparkles"></i> ডেমো ছবি সিলেক্ট করুন</span>
+                    <div id="demoGalleryPreview" style="display:none; flex-wrap:wrap; gap:6px; margin-top:6px; justify-content:center;"></div>
+                </div>
+                <input type="file" id="pDemoImgFile" accept="image/*" multiple style="display:none;" onchange="handleDemoImagesSelect(event)">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>পণ্যের বিবরণ বা সাইজ/কালার:</label>
+            <textarea id="pDesc" rows="2" placeholder="যেমন: ওয়াটারপ্রুফ, ৭ দিন ব্যাটারি ব্যাকআপ।"></textarea>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+            <button type="button" id="btnProductAction" onclick="addProductToList()" class="btn-primary" style="flex:1; background:linear-gradient(135deg,#0284c7,#0369a1);">
+                <i class="ti ti-plus"></i> তালিকায় পণ্যটি যোগ করুন
+            </button>
+            <button type="button" id="btnCancelEdit" onclick="cancelEditMode()" style="display:none; padding:0 18px; background:#64748b; color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer;">
+                বাতিল
+            </button>
+        </div>
+    </div>
+
+    <!-- প্রোডাক্ট তালিকা -->
+    <div class="card">
+        <h3><i class="ti ti-package"></i> যোগ করা পণ্যসমূহ (<span id="pCount">0</span>টি)</h3>
+        <div id="productList">
+            <div style="font-size:13px; color:var(--muted); text-align:center; padding:18px;">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
+        </div>
+
+        <button type="button" onclick="saveAndGenerateLink()" class="btn-primary" style="margin-top:15px;">
+            <i class="ti ti-device-floppy"></i> ডাটাবেজে পার্মানেন্ট সেভ করুন
+        </button>
+
+        <div id="linkOutput" class="link-box">
+            <b>🎉 আপনার ক্যাটালগ পার্মানেন্ট সেভ হয়েছে!</b><br>
+            <input type="text" id="finalUrlText" readonly style="margin:10px 0; text-align:center; font-weight:700; color:#059669;">
+            <button onclick="copyCatalogLink()" class="btn-primary" style="padding:10px;"><i class="ti ti-copy"></i> লিংক কপি করুন</button>
+            <p style="font-size:12px; margin-top:8px;">শপ তৈরির সময় এই লিংকটি দিলেই এআই ছবিসহ কাস্টমারকে পণ্য দেখাবে!</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let products = [];
+    let currentImageBase64 = '';
+    let currentDemoImageJson = '';
+    let editIndex = -1;
+    let restoreTimer = null;
+
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function showToast(msg) {
+        const el = document.getElementById('toastMsg');
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function updateCategoryDropdown() {
+        const cats = Array.from(new Set(products.map(p => (p.category || '').trim()).filter(c => c && c !== 'General')));
+        const select = document.getElementById('pCategorySelect');
+        if (cats.length > 0) {
+            select.style.display = 'block';
+            select.innerHTML = '<option value="">-- আগের ক্যাটাগরি --</option>' +
+                cats.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('') +
+                '<option value="__NEW__">➕ নতুন লিখুন</option>';
+        } else {
+            select.style.display = 'none';
+        }
+    }
+
+    function onCategorySelect(el) {
+        const val = el.value;
+        const input = document.getElementById('pCategory');
+        if (val === '__NEW__') { input.value = ''; input.focus(); }
+        else if (val) { input.value = val; }
+    }
+
+    function compressImageFile(file, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxDim = 600;
+                let w = img.width, h = img.height;
+                if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                callback(canvas.toDataURL('image/jpeg', 0.68));
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function handleImageSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        compressImageFile(file, (b64) => {
+            currentImageBase64 = b64;
+            document.getElementById('imgPreview').src = b64;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('imgUploadText').style.display = 'none';
+        });
+    }
+
+    function handleDemoImagesSelect(e) {
+        const files = Array.from(e.target.files).slice(0, 8);
+        if (!files.length) return;
+        const arr = [];
+        const gallery = document.getElementById('demoGalleryPreview');
+        gallery.innerHTML = '';
+        let done = 0;
+        files.forEach(file => {
+            compressImageFile(file, (b64) => {
+                arr.push(b64);
+                gallery.innerHTML += `<img src="${b64}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;border:1px solid #c7d2fe;">`;
+                done++;
+                if (done === files.length) {
+                    gallery.style.display = 'flex';
+                    document.getElementById('demoImgUploadText').textContent = `✅ ${arr.length}টি ডেমো ছবি যুক্ত হয়েছে`;
+                    currentDemoImageJson = JSON.stringify(arr);
+                }
+            });
+        });
+    }
+
+    function saveDraft() {
+        localStorage.setItem('freesite_store_name', document.getElementById('storeName').value);
+        localStorage.setItem('freesite_store_slug', document.getElementById('catalogSlug').value);
+        localStorage.setItem('freesite_store_pin', document.getElementById('adminPin').value);
+        localStorage.setItem('freesite_products', JSON.stringify(products));
+    }
+
+    window.onload = function() {
+        const sName = localStorage.getItem('freesite_store_name');
+        const sSlug = localStorage.getItem('freesite_store_slug');
+        const sPin = localStorage.getItem('freesite_store_pin');
+        const pList = localStorage.getItem('freesite_products');
+
+        if (sName) document.getElementById('storeName').value = sName;
+        if (sSlug) document.getElementById('catalogSlug').value = sSlug;
+        if (sPin) document.getElementById('adminPin').value = sPin;
+        if (pList) {
+            try { products = JSON.parse(pList); renderList(); updateCategoryDropdown(); } catch (e) {}
+        }
+    };
+
+    function tryRestoreFromSlug() {
+        clearTimeout(restoreTimer);
+        restoreTimer = setTimeout(async () => {
+            const slug = document.getElementById('catalogSlug').value.trim().toLowerCase();
+            if (slug.length < 3) return;
+            try {
+                const res = await fetch('/api/catalog/get/' + encodeURIComponent(slug));
+                const d = await res.json();
+                if (d.success && d.items && d.items.length > 0) {
+                    document.getElementById('storeName').value = d.store_name;
+                    document.getElementById('adminPin').value = d.admin_pin || '1234';
+                    products = d.items;
+                    renderList();
+                    updateCategoryDropdown();
+                    saveDraft();
+                }
+            } catch (e) {}
+        }, 450);
+    }
+
+    function addProductToList() {
+        const name = document.getElementById('pName').value.trim();
+        const price = document.getElementById('pPrice').value.trim();
+        const category = document.getElementById('pCategory').value.trim() || 'General';
+        const desc = document.getElementById('pDesc').value.trim();
+
+        if (!name || !price) return alert('পণ্যের নাম এবং দাম দিতে হবে!');
+
+        const productData = {
+            id: editIndex >= 0 && products[editIndex].id ? products[editIndex].id : undefined,
+            name,
+            price: parseFloat(price),
+            category,
+            description: desc,
+            image_url: currentImageBase64,
+            demo_images: currentDemoImageJson
+        };
+
+        if (editIndex >= 0) {
+            products[editIndex] = productData;
+            showToast('✅ পণ্য সফলভাবে আপডেট হয়েছে!');
+            cancelEditMode();
+        } else {
+            products.push(productData);
+            resetForm();
+            showToast('➕ পণ্য তালিকায় যোগ করা হয়েছে!');
+        }
+
+        renderList();
+        updateCategoryDropdown();
+        saveDraft();
+    }
+
+    function startEditProduct(idx) {
+        editIndex = idx;
+        const p = products[idx];
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pPrice').value = p.price;
+        document.getElementById('pCategory').value = p.category || 'General';
+        document.getElementById('pDesc').value = p.description || '';
+
+        currentImageBase64 = p.image_url || '';
+        if (currentImageBase64) {
+            document.getElementById('imgPreview').src = currentImageBase64;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('imgUploadText').style.display = 'none';
+        } else {
+            document.getElementById('imgPreview').style.display = 'none';
+            document.getElementById('imgUploadText').style.display = 'block';
+        }
+
+        currentDemoImageJson = p.demo_images || '';
+        const gallery = document.getElementById('demoGalleryPreview');
+        gallery.innerHTML = '';
+        if (currentDemoImageJson) {
+            let arr = [];
+            try { arr = JSON.parse(currentDemoImageJson); if (!Array.isArray(arr)) arr = [currentDemoImageJson]; }
+            catch (e) { arr = [currentDemoImageJson]; }
+            arr.forEach(src => { gallery.innerHTML += `<img src="${src}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">`; });
+            gallery.style.display = 'flex';
+            document.getElementById('demoImgUploadText').textContent = `✅ ${arr.length}টি ডেমো ছবি লোড হয়েছে`;
+        } else {
+            gallery.style.display = 'none';
+            document.getElementById('demoImgUploadText').innerHTML = '<i class="ti ti-sparkles"></i> ডেমো ছবি সিলেক্ট করুন';
+        }
+
+        document.getElementById('formHeading').innerHTML = '<i class="ti ti-edit"></i> পণ্য এডিট করুন: ' + escapeHtml(p.name);
+        const btn = document.getElementById('btnProductAction');
+        btn.innerHTML = '<i class="ti ti-check"></i> পণ্য আপডেট করুন';
+        btn.style.background = 'linear-gradient(135deg,#d97706,#b45309)';
+        document.getElementById('btnCancelEdit').style.display = 'inline-block';
+        document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEditMode() {
+        editIndex = -1;
+        resetForm();
+        document.getElementById('formHeading').innerHTML = '<i class="ti ti-plus"></i> নতুন পণ্য যোগ করুন';
+        const btn = document.getElementById('btnProductAction');
+        btn.innerHTML = '<i class="ti ti-plus"></i> তালিকায় পণ্যটি যোগ করুন';
+        btn.style.background = 'linear-gradient(135deg,#0284c7,#0369a1)';
+        document.getElementById('btnCancelEdit').style.display = 'none';
+    }
+
+    function resetForm() {
+        ['pName', 'pPrice', 'pDesc', 'pImgFile', 'pDemoImgFile', 'pCategorySelect'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        currentImageBase64 = '';
+        currentDemoImageJson = '';
+        document.getElementById('imgPreview').style.display = 'none';
+        document.getElementById('imgUploadText').style.display = 'block';
+        document.getElementById('demoGalleryPreview').innerHTML = '';
+        document.getElementById('demoGalleryPreview').style.display = 'none';
+        document.getElementById('demoImgUploadText').innerHTML = '<i class="ti ti-sparkles"></i> ডেমো ছবি সিলেক্ট করুন';
+    }
+
+    function copyItemUrl(idx) {
+        const slug = (document.getElementById('catalogSlug').value.trim() || 'my-shop').toLowerCase();
+        const p = products[idx];
+        if (!p || !p.id) return;
+        const itemUrl = `${window.location.origin}/c/${slug}/${p.id}`;
+        navigator.clipboard.writeText(itemUrl).then(() => showToast('🔗 পণ্যের লিংক কপি হয়েছে!'));
+    }
+
+    function renderList() {
+        document.getElementById('pCount').textContent = products.length;
+        const container = document.getElementById('productList');
+        if (products.length === 0) {
+            container.innerHTML = '<div style="font-size:13px; color:var(--muted); text-align:center; padding:18px;">এখনো কোনো পণ্য যোগ করা হয়নি।</div>';
+            return;
+        }
+
+        const slug = (document.getElementById('catalogSlug').value.trim() || 'my-shop').toLowerCase();
+
+        container.innerHTML = products.map((p, idx) => {
+            const itemUrl = p.id ? `${window.location.origin}/c/${encodeURIComponent(slug)}/${Number(p.id)}` : '';
+            return `
+            <div class="product-item">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="position:relative;">
+                            ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" class="product-img">` : `<div class="product-img" style="display:flex; align-items:center; justify-content:center; color:#94a3b8;"><i class="ti ti-photo-off"></i></div>`}
+                            ${p.demo_images ? `<span style="position:absolute; bottom:-4px; right:-4px; background:#4f46e5; color:#fff; font-size:9px; padding:1px 5px; border-radius:4px; font-weight:800;">ডেমো</span>` : ''}
+                        </div>
+                        <div>
+                            <b style="font-size:14px; color:#0f172a;">${escapeHtml(p.name)}</b> — <span style="color:#059669; font-weight:800;">৳${Number(p.price || 0)}</span><br>
+                            <small style="color:#64748b;">${escapeHtml(p.category || 'General')} | ${escapeHtml(p.description || 'বিবরণ নেই')}</small>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="startEditProduct(${idx})" style="padding:7px 12px; background:#e0f2fe; color:#0369a1; font-size:12px; border:none; border-radius:9px; cursor:pointer; font-weight:700;"><i class="ti ti-edit"></i> এডিট</button>
+                        <button onclick="removeProduct(${idx})" style="padding:7px 12px; background:#fee2e2; color:#b91c1c; font-size:12px; border:none; border-radius:9px; cursor:pointer; font-weight:700;"><i class="ti ti-trash"></i> মুছুন</button>
+                    </div>
+                </div>
+
+                ${itemUrl ? `
+                <div style="display:flex; gap:6px; background:rgba(255,255,255,0.75); padding:6px 10px; border-radius:10px; border:1px solid #e2e8f0; align-items:center;">
+                    <input type="text" readonly value="${escapeHtml(itemUrl)}" style="flex:1; padding:5px 8px; font-size:11px; color:#059669; font-weight:700;">
+                    <button onclick="copyItemUrl(${idx})" style="padding:6px 12px; font-size:11px; background:#059669; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700;">কপি</button>
+                    <a href="${escapeHtml(itemUrl)}" target="_blank" style="padding:6px 12px; font-size:11px; background:#0284c7; color:#fff; border-radius:8px; text-decoration:none; font-weight:700;">ভিউ</a>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    function removeProduct(idx) {
+        if (!confirm('আপনি কি এই পণ্যটি মুছে ফেলতে চান?')) return;
+        products.splice(idx, 1);
+        if (editIndex === idx) cancelEditMode();
+        renderList();
+        saveDraft();
+    }
+
+    async function saveAndGenerateLink() {
+        const storeName = document.getElementById('storeName').value.trim();
+        let slug = document.getElementById('catalogSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+        const pin = document.getElementById('adminPin').value.trim();
+
+        if (!storeName) return alert('দোকানের নাম দিন!');
+        if (!slug) slug = 'cat-' + Math.floor(1000 + Math.random() * 9000);
+        if (products.length === 0) return alert('কমপক্ষে ১টি পণ্য যোগ করুন!');
+
+        try {
+            const res = await fetch('/api/catalog/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ store_name: storeName, catalog_slug: slug, admin_pin: pin, items: products })
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('linkOutput').style.display = 'block';
+                document.getElementById('finalUrlText').value = data.catalog_url;
+                saveDraft();
+                tryRestoreFromSlug();
+                showToast('🎉 ক্যাটালগ সফলভাবে ডাটাবেজে সেভ হয়েছে!');
+            } else {
+                alert('ত্রুটি: ' + data.message);
+            }
+        } catch (e) {
+            alert('সার্ভার কানেকশন সমস্যা!');
+        }
+    }
+
+    function copyCatalogLink() {
+        const copyText = document.getElementById('finalUrlText');
+        navigator.clipboard.writeText(copyText.value).then(() => showToast('📋 ক্যাটালগ লিংক কপি করা হয়েছে!'));
+    }
+</script>
+</body>
+</html>
