@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeSite — One-Click Shop & AI WhatsApp Bot Builder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>FreeSite — অনলাইন শপ ও AI WhatsApp বট প্ল্যাটফর্ম</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Noto+Sans+Bengali:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         :root {
@@ -13,13 +13,18 @@
             --primary-deep: #065f46;
             --bg: #f1f5f9;
             --text: #0f172a;
-            --muted: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.72);
-            --glass-subtle: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.85);
+            --muted: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.78);
+            --glass-subtle: rgba(255, 255, 255, 0.70);
+            --glass-border: rgba(255, 255, 255, 0.90);
             --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+        }
         body {
             background-color: var(--bg);
             background-image:
@@ -28,132 +33,177 @@
                 radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
             background-attachment: fixed;
             color: var(--text);
-            padding: 18px 14px;
+            font-weight: 600;
+            line-height: 1.7;
+            padding: 16px 14px;
             min-height: 100vh;
-            line-height: 1.55;
         }
-        .container { max-width: 1020px; margin: 0 auto; }
+        .container { max-width: 1040px; margin: 0 auto; }
 
+        /* নরমাল ফ্লো Glass Header যাতে কোনো বাংলা লেখা কেটে না যায় */
         .glass-header {
-            position: sticky; top: 12px; z-index: 50;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 14px 20px;
+            border-radius: 20px;
+            padding: 15px 20px;
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
             box-shadow: var(--glass-shadow);
         }
-        .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; color: var(--primary-deep); text-decoration: none; }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; color: var(--primary-deep); text-decoration: none; }
         .brand-icon {
-            width: 38px; height: 38px; border-radius: 12px;
+            width: 40px; height: 40px; border-radius: 12px;
             background: linear-gradient(135deg, #059669, #047857);
-            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px;
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 21px;
             box-shadow: 0 6px 14px rgba(5, 150, 105, 0.28);
         }
         .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .pill-status {
-            padding: 6px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
-            background: rgba(220, 252, 231, 0.85); color: #15803d; border: 1px solid #bbf7d0;
+            padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+            background: rgba(220, 252, 231, 0.9); color: #15803d; border: 1px solid #bbf7d0;
         }
         .btn-nav {
-            padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
-            background: rgba(255, 255, 255, 0.88); color: #0f172a; border: 1px solid rgba(203, 213, 225, 0.9);
-            text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: .2s;
+            padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+            background: rgba(255, 255, 255, 0.92); color: #0f172a; border: 1px solid rgba(203, 213, 225, 0.95);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: .2s;
         }
         .btn-nav:hover { background: #fff; border-color: var(--primary); color: var(--primary); }
 
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-bottom: 24px; }
-        @media (min-width: 840px) { .main-grid { grid-template-columns: 1.25fr 0.95fr; align-items: start; } }
+        @media (min-width: 860px) { .main-grid { grid-template-columns: 1.25fr 0.95fr; align-items: start; } }
 
         .card {
             background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border); border-radius: 22px; padding: 26px;
-            box-shadow: var(--glass-shadow); transition: .2s;
+            border: 1px solid var(--glass-border); border-radius: 22px; padding: 24px 22px;
+            box-shadow: var(--glass-shadow); margin-bottom: 22px;
         }
         .hero-badge {
-            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
-            background: rgba(236, 253, 245, 0.9); color: #047857; border: 1px solid #a7f3d0;
-            font-size: 11px; font-weight: 800; margin-bottom: 12px;
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px;
+            background: rgba(236, 253, 245, 0.95); color: #047857; border: 1px solid #a7f3d0;
+            font-size: 12px; font-weight: 800; margin-bottom: 14px;
         }
-        h1 { font-size: 25px; font-weight: 800; color: #0f172a; line-height: 1.3; margin-bottom: 8px; }
-        h2 { font-size: 18px; font-weight: 800; color: var(--primary-deep); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .lead { font-size: 13.5px; color: var(--muted); margin-bottom: 20px; }
+        h1 {
+            font-size: 25px; font-weight: 800; color: #0f172a;
+            line-height: 1.5; padding-top: 4px; margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 19px; font-weight: 800; color: var(--primary-deep);
+            display: flex; align-items: center; gap: 8px; line-height: 1.5; padding-top: 2px; margin-bottom: 10px;
+        }
+        .lead { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 20px; line-height: 1.75; }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12.5px; color: #334155; margin-bottom: 6px; font-weight: 700; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13.5px; color: #1e293b; margin-bottom: 6px; font-weight: 700; line-height: 1.5; }
         input, select, textarea {
-            width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 12px; font-size: 14px;
-            color: var(--text); outline: none; transition: .2s;
+            width: 100%; padding: 13px 15px; background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(203, 213, 225, 0.95); border-radius: 12px; font-size: 14.5px; font-weight: 600;
+            color: var(--text); outline: none; transition: .2s; line-height: 1.6;
         }
         input:focus, select:focus, textarea:focus {
             background: #fff; border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.16);
         }
 
         .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
         @media (min-width: 520px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
 
+        .auth-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .auth-tab {
+            flex: 1; padding: 11px; border-radius: 12px; border: 1px solid #cbd5e1;
+            background: rgba(255,255,255,0.8); color: #334155; font-size: 14px; font-weight: 800; cursor: pointer;
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, #059669, #047857); color: #fff; border-color: transparent;
+        }
+
         .url-preview-box {
-            background: rgba(240, 253, 244, 0.85); border: 2px dashed #059669;
-            border-radius: 14px; padding: 12px 14px; margin-bottom: 16px;
-            font-size: 12px; color: #065f46; line-height: 1.6;
+            background: rgba(240, 253, 244, 0.92); border: 2px dashed #059669;
+            border-radius: 14px; padding: 13px 15px; margin-bottom: 16px;
+            font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.75;
         }
         .url-preview-box code {
-            background: rgba(255, 255, 255, 0.9); padding: 2px 7px; border-radius: 6px;
-            font-weight: 700; color: #047857; word-break: break-all;
+            background: #fff; padding: 3px 8px; border-radius: 6px;
+            font-weight: 700; color: #047857; word-break: break-all; font-family: monospace;
         }
 
         .btn-primary {
             width: 100%; padding: 14px 18px;
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 13px;
-            font-weight: 800; font-size: 14px; cursor: pointer;
+            font-weight: 800; font-size: 15px; cursor: pointer; line-height: 1.5;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3); transition: .2s;
         }
         .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(5, 150, 105, 0.4); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .btn-blue {
-            width: 100%; padding: 12px 16px;
+            width: 100%; padding: 13px 16px;
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px;
+            color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25); transition: .2s;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
         }
 
         .feedback-box {
-            display: none; margin-top: 16px; padding: 16px; border-radius: 14px; font-size: 13px; line-height: 1.65;
+            display: none; margin-top: 16px; padding: 16px; border-radius: 14px; font-size: 13.5px; font-weight: 700; line-height: 1.7;
         }
-        .feedback-success { background: rgba(220, 252, 231, 0.92); border: 1px solid #86efac; color: #065f46; }
-        .feedback-error { background: rgba(254, 226, 226, 0.92); border: 1px solid #fca5a5; color: #b91c1c; }
+        .feedback-success { background: rgba(220, 252, 231, 0.95); border: 1px solid #86efac; color: #065f46; }
+        .feedback-error { background: rgba(254, 226, 226, 0.95); border: 1px solid #fca5a5; color: #b91c1c; }
 
         .stores-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 14px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 16px; margin-top: 14px;
         }
         .store-tile {
             background: var(--glass-subtle); backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px;
             display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
-            transition: .2s; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
         }
-        .store-tile:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.88); }
-        .store-title { font-size: 15px; font-weight: 800; color: #0f172a; }
-        .store-url { font-size: 12px; color: #059669; font-weight: 700; word-break: break-all; margin-top: 3px; }
-        .store-meta { font-size: 11px; color: var(--muted); font-weight: 700; }
+        .store-title { font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1.5; }
+        .store-url { font-size: 12.5px; color: #059669; font-weight: 700; word-break: break-all; margin-top: 3px; }
         .btn-visit {
             display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%;
-            padding: 9px; border-radius: 10px; background: rgba(236, 253, 245, 0.9); color: #047857;
-            border: 1px solid #a7f3d0; font-size: 12px; font-weight: 800; text-decoration: none;
+            padding: 10px; border-radius: 10px; background: rgba(236, 253, 245, 0.95); color: #047857;
+            border: 1px solid #a7f3d0; font-size: 13px; font-weight: 800; text-decoration: none;
         }
 
-        .creator-badge {
-            text-align: center; padding: 22px 0; font-size: 12px; color: var(--muted); margin-top: 10px;
+        /* Developer Docs Code Block */
+        .dev-terminal {
+            background: rgba(15, 23, 42, 0.94); color: #e2e8f0; border-radius: 16px; padding: 16px;
+            font-family: monospace; font-size: 12.5px; overflow-x: auto; line-height: 1.65;
+            border: 1px solid rgba(255,255,255,0.12); margin-top: 10px;
         }
-        .creator-badge a { color: #059669; text-decoration: none; font-weight: 700; margin: 0 6px; }
+        .dev-ep-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+        @media (min-width: 680px) { .dev-ep-grid { grid-template-columns: 1fr 1fr; } }
+        .dev-box {
+            background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(203, 213, 225, 0.85);
+            border-radius: 16px; padding: 16px;
+        }
+
+        /* Branding Badges */
+        .brand-footer {
+            background: var(--glass-bg); backdrop-filter: blur(14px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 20px; text-align: center; margin-top: 12px; box-shadow: var(--glass-shadow);
+        }
+        .social-badges {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px;
+        }
+        .wa-premium-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #fff; padding: 10px 18px; border-radius: 999px; text-decoration: none;
+            font-size: 13.5px; font-weight: 800; border: 2px solid #fde047;
+            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3);
+        }
+        .tiktok-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff; padding: 10px 18px; border-radius: 999px; text-decoration: none;
+            font-size: 13.5px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+        }
     </style>
 </head>
 <body>
@@ -167,11 +217,76 @@
         <div class="header-right">
             <span class="pill-status">● Platform Live</span>
             <a href="/catalog-builder" class="btn-nav"><i class="ti ti-box"></i> ক্যাটালগ বিল্ডার</a>
+            <a href="#developer-docs" class="btn-nav"><i class="ti ti-code"></i> ডেভেলপার ডক্স</a>
+            <span id="headerUserArea">
+                <a href="#authSection" class="btn-nav" style="background:#dcfce7; color:#065f46; border-color:#86efac;"><i class="ti ti-user-circle"></i> লগইন / রেজিস্টার</a>
+            </span>
         </div>
     </header>
 
+    <!-- 👤 অ্যাকাউন্ট লগইন / রেজিস্টার কার্ড (লগইন না থাকলে দেখাবে) -->
+    <section id="authSection" class="card" style="border: 1.5px solid rgba(5,150,105,0.35);">
+        <h2><i class="ti ti-shield-check"></i> ইউজার অ্যাকাউন্ট (লগইন ও রেজিস্ট্রেশন)</h2>
+        <p class="lead" style="margin-bottom:14px;">আপনার সবগুলো শপ ও WhatsApp AI বট এক অ্যাকাউন্টে নিরাপদে পরিচালনা করতে লগইন বা ফ্রি অ্যাকাউন্ট খুলুন:</p>
+
+        <div class="auth-tabs">
+            <button type="button" id="tabLoginBtn" class="auth-tab active" onclick="switchAuthMode('login')">🔐 লগইন করুন</button>
+            <button type="button" id="tabRegBtn" class="auth-tab" onclick="switchAuthMode('register')">📝 নতুন অ্যাকাউন্ট খুলুন</button>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>ইমেইল ঠিকানা:</label>
+                    <input type="email" id="loginEmail" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>পাসওয়ার্ড:</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+            </div>
+            <button type="submit" id="btnLogin" class="btn-primary"><i class="ti ti-login"></i> লগইন করুন</button>
+        </form>
+
+        <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>আপনার পূর্ণ নাম:</label>
+                    <input type="text" id="regName" required placeholder="যেমন: সজিব আহমেদ">
+                </div>
+                <div class="form-group">
+                    <label>ইমেইল ঠিকানা:</label>
+                    <input type="email" id="regEmail" required placeholder="you@example.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর):</label>
+                <input type="password" id="regPassword" required minlength="6" placeholder="••••••••">
+            </div>
+            <button type="submit" id="btnRegister" class="btn-primary"><i class="ti ti-user-plus"></i> ফ্রি অ্যাকাউন্ট তৈরি করুন</button>
+        </form>
+
+        <div id="authFeedback" class="feedback-box"></div>
+    </section>
+
+    <!-- 👤 লগইন করা ইউজারের নিজস্ব শপসমূহ (লগইন থাকলে দেখাবে) -->
+    <section id="myAccountPanel" class="card" style="display:none; border:1.5px solid #10b981;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+                <h2 style="margin-bottom:2px;"><i class="ti ti-user-check"></i> স্বাগতম, <span id="userDisplayName">ইউজার</span>!</h2>
+                <p style="font-size:13px; color:var(--muted);" id="userDisplayEmail"></p>
+            </div>
+            <button onclick="handleLogout()" class="btn-nav" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;">
+                <i class="ti ti-logout"></i> লগআউট
+            </button>
+        </div>
+        <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">🛍️ আপনার তৈরি করা শপ ও ড্যাশবোর্ডসমূহ:</div>
+        <div id="myStoresList" class="stores-grid"></div>
+    </section>
+
     <div class="main-grid">
-        <section class="card">
+        <!-- বাম পাশে: ওয়ান-ক্লিক শপ ও বট ক্রিয়েটর -->
+        <section class="card" style="margin-bottom:0;">
             <span class="hero-badge"><i class="ti ti-sparkles"></i> ১ ক্লিকে ই-কমার্স শপ + WhatsApp AI বট</span>
             <h1>নিজের অনলাইন শপ ও AI সেলস অ্যাসিস্ট্যান্ট তৈরি করুন</h1>
             <p class="lead">
@@ -190,8 +305,8 @@
 
                 <div class="form-group" id="catalogUrlGroup">
                     <label>ক্যাটালগ লিংক (ঐচ্ছিক — ড্যাশবোর্ড থেকেও পণ্য যোগ করা যাবে):</label>
-                    <input type="text" id="catalogUrl" placeholder="যেমন: https://busness-bot.onrender.com/catalog/ss">
-                    <small style="display:block; margin-top:5px; color:#059669; font-weight:700; font-size:12px;">
+                    <input type="text" id="catalogUrl" placeholder="যেমন: https://techxzonee.shop/catalog/ss">
+                    <small style="display:block; margin-top:6px; color:#059669; font-weight:700; font-size:12.5px;">
                         👉 ক্যাটালগ লিংক নেই? <a href="/catalog-builder" target="_blank" style="color:#047857; text-decoration:underline;">২ মিনিটে ক্যাটালগ তৈরি করুন</a>
                     </small>
                 </div>
@@ -228,15 +343,16 @@
                 </div>
 
                 <button type="submit" id="btnSubmit" class="btn-primary">
-                    <i class="ti ti-rocket"></i> CREATE MY SHOP & AI DASHBOARD
+                    <i class="ti ti-rocket"></i> আমার শপ ও AI ড্যাশবোর্ড তৈরি করুন
                 </button>
             </form>
 
             <div id="resultBox" class="feedback-box"></div>
         </section>
 
-        <aside class="card">
-            <h2><i class="ti ti-world-search"></i> AI Website Link Analyzer</h2>
+        <!-- ডান পাশে: AI Website Link Analyzer -->
+        <aside class="card" style="margin-bottom:0;">
+            <h2><i class="ti ti-world-search"></i> AI ওয়েবসাইট লিংক অ্যানালাইজার</h2>
             <p class="lead" style="margin-bottom:14px;">
                 যেকোনো ই-কমার্স বা বিজনেস ওয়েবসাইটের লিংক দিয়ে দেখুন আমাদের Gemini AI কীভাবে স্বয়ংক্রিয়ভাবে ব্যবসার ধরন ও পণ্য শনাক্ত করে:
             </p>
@@ -251,36 +367,97 @@
             <div id="analyzerResult" class="feedback-box feedback-success" style="margin-top:16px;"></div>
 
             <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(203,213,225,0.6);">
-                <div style="font-size:13px; font-weight:800; color:#065f46; margin-bottom:8px;">✨ প্ল্যাটফর্মের মূল সুবিধাসমূহ:</div>
-                <ul style="font-size:12.5px; color:#475569; padding-left:18px; line-height:1.8;">
+                <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">✨ প্ল্যাটফর্মের মূল সুবিধাসমূহ:</div>
+                <ul style="font-size:13px; font-weight:700; color:#334155; padding-left:18px; line-height:1.9;">
                     <li>১ ক্লিকে নিজস্ব শপ (<code>domain.com/myshop</code>) ও প্রোডাক্ট লিংক</li>
                     <li>২৪/৭ অটোমেটিক WhatsApp AI কাস্টমার সাপোর্ট ও ভয়েস/ছবি বুঝে রিপ্লাই</li>
                     <li>সরাসরি WhatsApp-এ লাইভ অর্ডার অ্যালার্ট নোটিফিকেশন</li>
-                    <li>bKash / Nagad / Rocket প্রিমিয়াম সাপোর্ট</li>
+                    <li>ওয়েবসাইট ও মোবাইল অ্যাপ বানানোর জন্য নিজস্ব REST API</li>
                 </ul>
             </div>
         </aside>
     </div>
 
-    <section class="card">
+    <!-- অ্যাক্টিভ স্টোরস শোকেস -->
+    <section class="card" style="margin-top:22px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <h2 style="margin:0;"><i class="ti ti-building-store"></i> অ্যাক্টিভ শপ শোকেস (Active Stores)</h2>
+            <h2 style="margin:0;"><i class="ti ti-building-store"></i> অ্যাক্টিভ শপ শোকেস</h2>
             <span class="pill-status" id="storeCountBadge">লোড হচ্ছে...</span>
         </div>
         <div id="storesShowcase" class="stores-grid">
-            <div style="grid-column:1/-1; text-align:center; padding:24px; color:#64748b; font-size:13px;">স্টোর তালিকা লোড হচ্ছে...</div>
+            <div style="grid-column:1/-1; text-align:center; padding:24px; color:#475569; font-size:13.5px;">স্টোর তালিকা লোড হচ্ছে...</div>
         </div>
     </section>
 
-    <footer class="creator-badge">
-        <span>Architect: <b>Sojib</b></span> •
-        <a href="https://wa.me/8801409084819" target="_blank"><i class="ti ti-brand-whatsapp"></i> 01409084819</a> •
-        <a href="https://tiktok.com/@sojib..music" target="_blank"><i class="ti ti-brand-tiktok"></i> @sojib..music</a>
+    <!-- 💻 Developer Docs (Website & Mobile App Builder) -->
+    <section id="developer-docs" class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+            <h2 style="margin:0;"><i class="ti ti-code"></i> ডেভেলপার ডকুমেন্টেশন (Website & App Builder API)</h2>
+            <a href="/api/v1/docs" target="_blank" class="pill-status" style="text-decoration:none;">📖 Interactive RapiDoc খুলুন</a>
+        </div>
+        <p class="lead" style="margin-bottom:14px;">
+            আমাদের প্ল্যাটফর্মের ইউনিভার্সাল ক্লাউড API ব্যবহার করে সহজেই নিজস্ব <b>Android / iOS মোবাইল অ্যাপ</b> অথবা <b>কাস্টম React / Next.js / WordPress ওয়েবসাইট</b> তৈরি করতে পারবেন:
+        </p>
+
+        <div class="dev-ep-grid">
+            <div class="dev-box">
+                <div style="font-size:14px; font-weight:800; color:#065f46;">১. Authentication Headers</div>
+                <p style="font-size:12.5px; color:#475569; margin-top:4px;">প্রতিটি API রিকোয়েস্টে এই দুটি হেডার পাঠাতে হবে:</p>
+                <div class="dev-terminal">Base URL: <span id="devBaseUrl"></span>/api/v1
+X-API-KEY: your_live_api_key
+X-SECRET-KEY: your_secret_key</div>
+            </div>
+
+            <div class="dev-box">
+                <div style="font-size:14px; font-weight:800; color:#065f46;">২. মূল API Endpoints</div>
+                <div class="dev-terminal">GET  /api/v1/products          (সব পণ্য)
+GET  /api/v1/products/search?q=watch
+POST /api/v1/products          (নতুন পণ্য)
+GET  /api/v1/categories        (ক্যাটাগরি)
+GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
+            </div>
+        </div>
+
+        <div class="dev-box" style="margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:14px; font-weight:800; color:#065f46;">৩. ওয়েবসাইট বা মোবাইল অ্যাপে প্রোডাক্ট লোড করার উদাহরণ (JavaScript / Fetch)</span>
+                <button type="button" onclick="copyDevSnippet()" class="btn-nav" style="padding:5px 12px; font-size:12px;"><i class="ti ti-copy"></i> কোড কপি</button>
+            </div>
+            <pre class="dev-terminal" id="devCodeSnippet">fetch('/api/v1/products?page=1&limit=20', {
+  headers: {
+    'X-API-KEY': 'YOUR_API_KEY',
+    'X-SECRET-KEY': 'YOUR_SECRET_KEY'
+  }
+})
+.then(res => res.json())
+.then(data => console.log('Products:', data.data));</pre>
+        </div>
+    </section>
+
+    <!-- ফুটার ও প্রিমিয়াম ব্র্যান্ডিং -->
+    <footer class="brand-footer">
+        <div style="font-size:14px; font-weight:800; color:#0f172a;">
+            ⚡ FreeSite SaaS Platform — Developed with ❤️ by <span style="color:#059669;">Sojib</span>
+        </div>
+        <div class="social-badges">
+            <a href="https://wa.me/8801404277094" target="_blank" class="wa-premium-badge">
+                <i class="ti ti-crown" style="color:#fde047; font-size:18px;"></i>
+                <i class="ti ti-brand-whatsapp" style="font-size:18px;"></i>
+                <span>WhatsApp (Premium): 01404277094</span>
+            </a>
+            <a href="https://tiktok.com/@sojib_music" target="_blank" class="tiktok-badge">
+                <i class="ti ti-brand-tiktok" style="color:#2dd4bf; font-size:18px;"></i>
+                <span>TikTok: @sojib_music</span>
+            </a>
+        </div>
     </footer>
 </div>
 
 <script>
     const CURRENT_HOST = window.location.host.replace(/^www\./, '').toLowerCase();
+    let currentAuthUser = null;
+
+    document.getElementById('devBaseUrl').textContent = window.location.origin;
 
     function escapeHtml(str) {
         if (str === null || str === undefined) return '';
@@ -290,6 +467,121 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    function switchAuthMode(mode) {
+        document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+        document.getElementById('tabLoginBtn').classList.toggle('active', mode === 'login');
+        document.getElementById('tabRegBtn').classList.toggle('active', mode === 'register');
+        document.getElementById('authFeedback').style.display = 'none';
+    }
+
+    function showAuthFeedback(msg, isSuccess) {
+        const box = document.getElementById('authFeedback');
+        box.style.display = 'block';
+        box.className = 'feedback-box ' + (isSuccess ? 'feedback-success' : 'feedback-error');
+        box.textContent = msg;
+    }
+
+    async function loadCurrentSession() {
+        try {
+            const res = await fetch('/api/auth/me');
+            const d = await res.json();
+            if (d.success && d.user) {
+                currentAuthUser = d.user;
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('myAccountPanel').style.display = 'block';
+                document.getElementById('userDisplayName').textContent = d.user.name || d.user.email;
+                document.getElementById('userDisplayEmail').textContent = d.user.email;
+                document.getElementById('headerUserArea').innerHTML = `
+                    <span class="pill-status" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">
+                        👤 ${escapeHtml(d.user.name || d.user.email)}
+                    </span>
+                `;
+                renderMyStores(d.myStores || []);
+            } else {
+                currentAuthUser = null;
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('myAccountPanel').style.display = 'none';
+                document.getElementById('headerUserArea').innerHTML = `
+                    <a href="#authSection" class="btn-nav" style="background:#dcfce7; color:#065f46; border-color:#86efac;"><i class="ti ti-user-circle"></i> লগইন / রেজিস্টার</a>
+                `;
+            }
+        } catch (e) {}
+    }
+
+    function renderMyStores(stores) {
+        const container = document.getElementById('myStoresList');
+        if (!stores || stores.length === 0) {
+            container.innerHTML = `<div style="grid-column:1/-1; padding:14px; font-size:13px; color:#475569; background:rgba(255,255,255,0.6); border-radius:12px;">আপনার অ্যাকাউন্টে এখনো কোনো শপ তৈরি করা হয়নি। নিচের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
+            return;
+        }
+        container.innerHTML = stores.map(s => {
+            const dom = s.base_domain || CURRENT_HOST;
+            const shopUrl = `https://${dom}/${s.subdomain}`;
+            const dashUrl = `https://${dom}/dash/${s.subdomain}`;
+            return `
+            <div class="store-tile">
+                <div>
+                    <div class="store-title">${escapeHtml(s.bot_name)}</div>
+                    <div class="store-url">${escapeHtml(dom)}/${escapeHtml(s.subdomain)}</div>
+                    <div style="font-size:11.5px; color:#475569; margin-top:4px;">স্ট্যাটাস: <b>${escapeHtml(s.status || 'DISCONNECTED')}</b></div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <a href="${escapeHtml(shopUrl)}" target="_blank" class="btn-visit">🛍️ শপ</a>
+                    <a href="${escapeHtml(dashUrl)}" target="_blank" class="btn-visit" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">🎛️ ড্যাশবোর্ড</a>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnLogin');
+        btn.disabled = true;
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('loginEmail').value.trim(),
+                    password: document.getElementById('loginPassword').value
+                })
+            });
+            const d = await res.json();
+            showAuthFeedback(d.message, d.success);
+            if (d.success) await loadCurrentSession();
+        } catch (err) {
+            showAuthFeedback('সার্ভার কানেকশন সমস্যা!', false);
+        } finally { btn.disabled = false; }
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnRegister');
+        btn.disabled = true;
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: document.getElementById('regName').value.trim(),
+                    email: document.getElementById('regEmail').value.trim(),
+                    password: document.getElementById('regPassword').value
+                })
+            });
+            const d = await res.json();
+            showAuthFeedback(d.message, d.success);
+            if (d.success) await loadCurrentSession();
+        } catch (err) {
+            showAuthFeedback('সার্ভার কানেকশন সমস্যা!', false);
+        } finally { btn.disabled = false; }
+    }
+
+    async function handleLogout() {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        await loadCurrentSession();
     }
 
     function toggleBotFields() {
@@ -322,7 +614,6 @@
         document.getElementById('previewDashUrl').textContent = `https://${dom}/dash/${slug}`;
     }
 
-    // ডিফল্ট ডোমেইন হিসেবে বর্তমান হোস্ট + অ্যাডমিন প্যানেল থেকে যুক্ত করা ডোমেইনগুলো লোড
     async function loadActiveDomains() {
         const select = document.getElementById('baseDomain');
         select.innerHTML = `<option value="${escapeHtml(CURRENT_HOST)}" selected>${escapeHtml(CURRENT_HOST)} (Default)</option>`;
@@ -352,7 +643,7 @@
             badge.textContent = `${stores.length}টি অ্যাক্টিভ শপ`;
 
             if (stores.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:26px; color:#64748b; font-size:13px;">এখনো কোনো শপ তৈরি হয়নি। উপরের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:26px; color:#475569; font-size:13.5px;">এখনো কোনো শপ তৈরি হয়নি। উপরের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
                 return;
             }
 
@@ -365,7 +656,7 @@
                     <div>
                         <div class="store-title">${escapeHtml(s.bot_name)}</div>
                         <div class="store-url">${escapeHtml(dom)}/${escapeHtml(sub)}</div>
-                        <div class="store-meta" style="margin-top:6px;">📦 ${Number(s.product_count || 0)}টি পণ্য</div>
+                        <div style="font-size:12px; color:#475569; margin-top:6px;">📦 ${Number(s.product_count || 0)}টি পণ্য</div>
                     </div>
                     <a href="${escapeHtml(url)}" target="_blank" class="btn-visit">
                         <i class="ti ti-external-link"></i> শপ ভিজিট করুন
@@ -418,6 +709,11 @@
 
     async function handleLaunch(e) {
         e.preventDefault();
+        if (!currentAuthUser) {
+            document.getElementById('authSection').scrollIntoView({ behavior: 'smooth' });
+            return showAuthFeedback('🔒 শপ তৈরি করার আগে অনুগ্রহ করে লগইন অথবা নতুন অ্যাকাউন্ট তৈরি করুন!', false);
+        }
+
         const btn = document.getElementById('btnSubmit');
         const box = document.getElementById('resultBox');
         btn.innerHTML = '<i class="ti ti-loader"></i> তৈরি হচ্ছে... অপেক্ষা করুন';
@@ -449,6 +745,7 @@
                     🛍️ <b>কাস্টমার শপ লিংক:</b> <a href="${escapeHtml(result.shopUrl)}" target="_blank" style="color:#047857; font-weight:800;">${escapeHtml(result.shopUrl)}</a><br>
                     🎛️ <b>ওনার ড্যাশবোর্ড:</b> <a href="${escapeHtml(result.dashboardUrl)}" target="_blank" style="color:#0284c7; font-weight:800;">${escapeHtml(result.dashboardUrl)}</a>
                 `;
+                loadCurrentSession();
                 loadPublicStores();
             } else {
                 box.className = 'feedback-box feedback-error';
@@ -459,11 +756,17 @@
             box.className = 'feedback-box feedback-error';
             box.textContent = 'সার্ভার কানেকশন সমস্যা হয়েছে!';
         } finally {
-            btn.innerHTML = '<i class="ti ti-rocket"></i> CREATE MY SHOP & AI DASHBOARD';
+            btn.innerHTML = '<i class="ti ti-rocket"></i> আমার শপ ও AI ড্যাশবোর্ড তৈরি করুন';
             btn.disabled = false;
         }
     }
 
+    function copyDevSnippet() {
+        const text = document.getElementById('devCodeSnippet').textContent;
+        navigator.clipboard.writeText(text).then(() => alert('কোড কপি করা হয়েছে!'));
+    }
+
+    loadCurrentSession();
     loadActiveDomains();
     loadPublicStores();
 </script>
