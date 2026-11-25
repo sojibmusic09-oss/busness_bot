@@ -14,9 +14,9 @@
             --bg: #f1f5f9;
             --text: #0f172a;
             --muted: #475569;
-            --glass-bg: rgba(255, 255, 255, 0.78);
-            --glass-subtle: rgba(255, 255, 255, 0.70);
-            --glass-border: rgba(255, 255, 255, 0.90);
+            --glass-bg: rgba(255, 255, 255, 0.80);
+            --glass-subtle: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.92);
             --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
         }
         * {
@@ -28,7 +28,7 @@
         body {
             background-color: var(--bg);
             background-image:
-                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.09) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
                 radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
             background-attachment: fixed;
@@ -40,9 +40,8 @@
         }
         .container { max-width: 1040px; margin: 0 auto; }
 
-        /* নরমাল ফ্লো Glass Header যাতে কোনো বাংলা লেখা কেটে না যায় */
         .glass-header {
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
@@ -66,9 +65,8 @@
         .btn-nav {
             padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
             background: rgba(255, 255, 255, 0.92); color: #0f172a; border: 1px solid rgba(203, 213, 225, 0.95);
-            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: .2s;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
         }
-        .btn-nav:hover { background: #fff; border-color: var(--primary); color: var(--primary); }
 
         .main-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-bottom: 24px; }
         @media (min-width: 860px) { .main-grid { grid-template-columns: 1.25fr 0.95fr; align-items: start; } }
@@ -78,54 +76,41 @@
             border: 1px solid var(--glass-border); border-radius: 22px; padding: 24px 22px;
             box-shadow: var(--glass-shadow); margin-bottom: 22px;
         }
+        .auth-wrap { max-width: 490px; margin: 18px auto 26px; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px;
             background: rgba(236, 253, 245, 0.95); color: #047857; border: 1px solid #a7f3d0;
             font-size: 12px; font-weight: 800; margin-bottom: 14px;
         }
-        h1 {
-            font-size: 25px; font-weight: 800; color: #0f172a;
-            line-height: 1.5; padding-top: 4px; margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 19px; font-weight: 800; color: var(--primary-deep);
-            display: flex; align-items: center; gap: 8px; line-height: 1.5; padding-top: 2px; margin-bottom: 10px;
-        }
-        .lead { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 20px; line-height: 1.75; }
+        h1 { font-size: 25px; font-weight: 800; color: #0f172a; line-height: 1.5; padding-top: 4px; margin-bottom: 10px; }
+        h2 { font-size: 19px; font-weight: 800; color: var(--primary-deep); display: flex; align-items: center; gap: 8px; line-height: 1.5; padding-top: 2px; margin-bottom: 10px; }
+        .lead { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 18px; line-height: 1.75; }
 
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 13.5px; color: #1e293b; margin-bottom: 6px; font-weight: 700; line-height: 1.5; }
         input, select, textarea {
-            width: 100%; padding: 13px 15px; background: rgba(255, 255, 255, 0.9);
+            width: 100%; padding: 13px 15px; background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(203, 213, 225, 0.95); border-radius: 12px; font-size: 14.5px; font-weight: 600;
             color: var(--text); outline: none; transition: .2s; line-height: 1.6;
         }
-        input:focus, select:focus, textarea:focus {
-            background: #fff; border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.16);
-        }
+        input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.16); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
         @media (min-width: 520px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
 
-        .auth-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .auth-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
         .auth-tab {
             flex: 1; padding: 11px; border-radius: 12px; border: 1px solid #cbd5e1;
-            background: rgba(255,255,255,0.8); color: #334155; font-size: 14px; font-weight: 800; cursor: pointer;
+            background: rgba(255,255,255,0.85); color: #334155; font-size: 14px; font-weight: 800; cursor: pointer;
         }
-        .auth-tab.active {
-            background: linear-gradient(135deg, #059669, #047857); color: #fff; border-color: transparent;
-        }
+        .auth-tab.active { background: linear-gradient(135deg, #059669, #047857); color: #fff; border-color: transparent; }
 
         .url-preview-box {
             background: rgba(240, 253, 244, 0.92); border: 2px dashed #059669;
             border-radius: 14px; padding: 13px 15px; margin-bottom: 16px;
             font-size: 13px; font-weight: 700; color: #065f46; line-height: 1.75;
         }
-        .url-preview-box code {
-            background: #fff; padding: 3px 8px; border-radius: 6px;
-            font-weight: 700; color: #047857; word-break: break-all; font-family: monospace;
-        }
+        .url-preview-box code { background: #fff; padding: 3px 8px; border-radius: 6px; font-weight: 700; color: #047857; word-break: break-all; font-family: monospace; }
 
         .btn-primary {
             width: 100%; padding: 14px 18px;
@@ -133,28 +118,20 @@
             color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 13px;
             font-weight: 800; font-size: 15px; cursor: pointer; line-height: 1.5;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3); transition: .2s;
+            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3);
         }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(5, 150, 105, 0.4); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-
         .btn-blue {
             width: 100%; padding: 13px 16px;
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
             color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
         }
 
-        .feedback-box {
-            display: none; margin-top: 16px; padding: 16px; border-radius: 14px; font-size: 13.5px; font-weight: 700; line-height: 1.7;
-        }
+        .feedback-box { display: none; margin-top: 16px; padding: 16px; border-radius: 14px; font-size: 13.5px; font-weight: 700; line-height: 1.7; }
         .feedback-success { background: rgba(220, 252, 231, 0.95); border: 1px solid #86efac; color: #065f46; }
         .feedback-error { background: rgba(254, 226, 226, 0.95); border: 1px solid #fca5a5; color: #b91c1c; }
 
-        .stores-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 16px; margin-top: 14px;
-        }
+        .stores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 16px; margin-top: 14px; }
         .store-tile {
             background: var(--glass-subtle); backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px;
@@ -168,28 +145,20 @@
             border: 1px solid #a7f3d0; font-size: 13px; font-weight: 800; text-decoration: none;
         }
 
-        /* Developer Docs Code Block */
         .dev-terminal {
             background: rgba(15, 23, 42, 0.94); color: #e2e8f0; border-radius: 16px; padding: 16px;
-            font-family: monospace; font-size: 12.5px; overflow-x: auto; line-height: 1.65;
-            border: 1px solid rgba(255,255,255,0.12); margin-top: 10px;
+            font-family: monospace; font-size: 12.5px; overflow-x: auto; line-height: 1.65; margin-top: 10px;
         }
         .dev-ep-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
         @media (min-width: 680px) { .dev-ep-grid { grid-template-columns: 1fr 1fr; } }
-        .dev-box {
-            background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(203, 213, 225, 0.85);
-            border-radius: 16px; padding: 16px;
-        }
+        .dev-box { background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(203, 213, 225, 0.85); border-radius: 16px; padding: 16px; }
 
-        /* Branding Badges */
         .brand-footer {
             background: var(--glass-bg); backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); border-radius: 20px;
             padding: 20px; text-align: center; margin-top: 12px; box-shadow: var(--glass-shadow);
         }
-        .social-badges {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px;
-        }
+        .social-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 12px; }
         .wa-premium-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
@@ -202,7 +171,6 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #fff; padding: 10px 18px; border-radius: 999px; text-decoration: none;
             font-size: 13.5px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
         }
     </style>
 </head>
@@ -216,48 +184,48 @@
         </a>
         <div class="header-right">
             <span class="pill-status">● Platform Live</span>
-            <a href="/catalog-builder" class="btn-nav"><i class="ti ti-box"></i> ক্যাটালগ বিল্ডার</a>
-            <a href="#developer-docs" class="btn-nav"><i class="ti ti-code"></i> ডেভেলপার ডক্স</a>
-            <span id="headerUserArea">
-                <a href="#authSection" class="btn-nav" style="background:#dcfce7; color:#065f46; border-color:#86efac;"><i class="ti ti-user-circle"></i> লগইন / রেজিস্টার</a>
-            </span>
+            <div id="headerProtectedNav" style="display:none; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="/catalog-builder" class="btn-nav"><i class="ti ti-box"></i> ক্যাটালগ বিল্ডার</a>
+                <a href="#developer-docs" class="btn-nav"><i class="ti ti-code"></i> ডেভেলপার ডক্স</a>
+                <span id="headerUserBadge"></span>
+                <button onclick="handleLogout()" class="btn-nav" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;"><i class="ti ti-logout"></i> লগআউট</button>
+            </div>
         </div>
     </header>
 
-    <!-- 👤 অ্যাকাউন্ট লগইন / রেজিস্টার কার্ড (লগইন না থাকলে দেখাবে) -->
-    <section id="authSection" class="card" style="border: 1.5px solid rgba(5,150,105,0.35);">
-        <h2><i class="ti ti-shield-check"></i> ইউজার অ্যাকাউন্ট (লগইন ও রেজিস্ট্রেশন)</h2>
-        <p class="lead" style="margin-bottom:14px;">আপনার সবগুলো শপ ও WhatsApp AI বট এক অ্যাকাউন্টে নিরাপদে পরিচালনা করতে লগইন বা ফ্রি অ্যাকাউন্ট খুলুন:</p>
+    <!-- 🔒 লগইন না থাকলে শুধুমাত্র এই বক্সটিই দেখাবে -->
+    <section id="authSection" class="card auth-wrap" style="border: 1.5px solid rgba(5,150,105,0.35);">
+        <div style="text-align:center; margin-bottom:14px;">
+            <span class="hero-badge" style="margin-bottom:8px;"><i class="ti ti-lock"></i> প্রাইভেট ও নিরাপদ অ্যাকাউন্ট</span>
+            <h2 style="justify-content:center; font-size:22px;">লগইন বা নতুন অ্যাকাউন্ট খুলুন</h2>
+            <p class="lead" style="margin-bottom:0;">আপনার শপ, প্রোডাক্ট ও WhatsApp বট আলাদাভাবে পরিচালনা করতে লগইন করুন।</p>
+        </div>
 
         <div class="auth-tabs">
             <button type="button" id="tabLoginBtn" class="auth-tab active" onclick="switchAuthMode('login')">🔐 লগইন করুন</button>
-            <button type="button" id="tabRegBtn" class="auth-tab" onclick="switchAuthMode('register')">📝 নতুন অ্যাকাউন্ট খুলুন</button>
+            <button type="button" id="tabRegBtn" class="auth-tab" onclick="switchAuthMode('register')">📝 নতুন অ্যাকাউন্ট</button>
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>ইমেইল ঠিকানা:</label>
-                    <input type="email" id="loginEmail" required placeholder="you@example.com">
-                </div>
-                <div class="form-group">
-                    <label>পাসওয়ার্ড:</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••">
-                </div>
+            <div class="form-group">
+                <label>ইমেইল ঠিকানা:</label>
+                <input type="email" id="loginEmail" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>পাসওয়ার্ড:</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••">
             </div>
             <button type="submit" id="btnLogin" class="btn-primary"><i class="ti ti-login"></i> লগইন করুন</button>
         </form>
 
         <form id="registerForm" onsubmit="handleRegister(event)" style="display:none;">
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>আপনার পূর্ণ নাম:</label>
-                    <input type="text" id="regName" required placeholder="যেমন: সজিব আহমেদ">
-                </div>
-                <div class="form-group">
-                    <label>ইমেইল ঠিকানা:</label>
-                    <input type="email" id="regEmail" required placeholder="you@example.com">
-                </div>
+            <div class="form-group">
+                <label>আপনার পূর্ণ নাম:</label>
+                <input type="text" id="regName" required placeholder="যেমন: সজিব আহমেদ">
+            </div>
+            <div class="form-group">
+                <label>ইমেইল ঠিকানা:</label>
+                <input type="email" id="regEmail" required placeholder="you@example.com">
             </div>
             <div class="form-group">
                 <label>পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর):</label>
@@ -269,161 +237,146 @@
         <div id="authFeedback" class="feedback-box"></div>
     </section>
 
-    <!-- 👤 লগইন করা ইউজারের নিজস্ব শপসমূহ (লগইন থাকলে দেখাবে) -->
-    <section id="myAccountPanel" class="card" style="display:none; border:1.5px solid #10b981;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-            <div>
-                <h2 style="margin-bottom:2px;"><i class="ti ti-user-check"></i> স্বাগতম, <span id="userDisplayName">ইউজার</span>!</h2>
-                <p style="font-size:13px; color:var(--muted);" id="userDisplayEmail"></p>
+    <!-- ✅ শুধুমাত্র লগইন করার পর নিচের সবকিছু ওপেন হবে -->
+    <div id="protectedWorkspace" style="display:none;">
+        <!-- আমার অ্যাকাউন্ট ও তৈরি করা নিজস্ব শপসমূহ -->
+        <section class="card" style="border:1.5px solid #10b981;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <div>
+                    <h2 style="margin-bottom:2px;"><i class="ti ti-user-check"></i> স্বাগতম, <span id="userDisplayName">ইউজার</span>!</h2>
+                    <p style="font-size:13px; color:var(--muted);" id="userDisplayEmail"></p>
+                </div>
+                <span class="pill-status">● আপনার নিজস্ব ওয়ার্কস্পেস</span>
             </div>
-            <button onclick="handleLogout()" class="btn-nav" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;">
-                <i class="ti ti-logout"></i> লগআউট
-            </button>
-        </div>
-        <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">🛍️ আপনার তৈরি করা শপ ও ড্যাশবোর্ডসমূহ:</div>
-        <div id="myStoresList" class="stores-grid"></div>
-    </section>
-
-    <div class="main-grid">
-        <!-- বাম পাশে: ওয়ান-ক্লিক শপ ও বট ক্রিয়েটর -->
-        <section class="card" style="margin-bottom:0;">
-            <span class="hero-badge"><i class="ti ti-sparkles"></i> ১ ক্লিকে ই-কমার্স শপ + WhatsApp AI বট</span>
-            <h1>নিজের অনলাইন শপ ও AI সেলস অ্যাসিস্ট্যান্ট তৈরি করুন</h1>
-            <p class="lead">
-                ওয়েবসাইট থাকুক বা না থাকুক—৩০ সেকেন্ডে নিজস্ব শপ লিংক (<code>/myshop</code>) এবং স্বয়ংক্রিয় হোয়াটসঅ্যাপ রিপ্লাই সিস্টেম চালু করুন।
-            </p>
-
-            <form onsubmit="handleLaunch(event)">
-                <div class="form-group">
-                    <label>বট / শপের ধরন নির্বাচন করুন:</label>
-                    <select id="botType" onchange="toggleBotFields()">
-                        <option value="catalog_link">📦 ডিজিটাল ক্যাটালগ / ই-কমার্স শপ (ওয়েবসাইট ছাড়া)</option>
-                        <option value="business_site">🌐 আমার ওয়েবসাইট আছে (Website URL)</option>
-                        <option value="personal">👤 পার্সোনাল ইউজার (ব্যক্তিগত AI সহকারী)</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="catalogUrlGroup">
-                    <label>ক্যাটালগ লিংক (ঐচ্ছিক — ড্যাশবোর্ড থেকেও পণ্য যোগ করা যাবে):</label>
-                    <input type="text" id="catalogUrl" placeholder="যেমন: https://techxzonee.shop/catalog/ss">
-                    <small style="display:block; margin-top:6px; color:#059669; font-weight:700; font-size:12.5px;">
-                        👉 ক্যাটালগ লিংক নেই? <a href="/catalog-builder" target="_blank" style="color:#047857; text-decoration:underline;">২ মিনিটে ক্যাটালগ তৈরি করুন</a>
-                    </small>
-                </div>
-
-                <div class="form-group" id="siteUrlGroup" style="display:none;">
-                    <label>ওয়েবসাইট লিংক (যা এআই অটো-রিড করবে):</label>
-                    <input type="url" id="siteUrl" placeholder="https://yourwebsite.com">
-                </div>
-
-                <div class="form-group" id="manualDetailsGroup" style="display:none;">
-                    <label>নিজের বায়ো বা এআই নির্দেশিকা লিখে দিন:</label>
-                    <textarea id="manualDetails" rows="3" placeholder="যেমন: আমি ব্যস্ত থাকলে বন্ধুদের বলবে পরে কল দিতে।"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label id="lblBizName">শপ বা ব্যবসার নাম:</label>
-                    <input type="text" id="bizName" required placeholder="যেমন: My Fashion Shop">
-                </div>
-
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>শপ স্লাগ / নাম (Slug):</label>
-                        <input type="text" id="subdomain" required placeholder="যেমন: myshop" oninput="updateUrlPreview()">
-                    </div>
-                    <div class="form-group">
-                        <label>ডোমেইন নির্বাচন করুন:</label>
-                        <select id="baseDomain" onchange="updateUrlPreview()"></select>
-                    </div>
-                </div>
-
-                <div class="url-preview-box">
-                    🛍️ <b>আপনার শপ লিংক হবে:</b> <code id="previewShopUrl"></code><br>
-                    🎛️ <b>ওনার ড্যাশবোর্ড হবে:</b> <code id="previewDashUrl"></code>
-                </div>
-
-                <button type="submit" id="btnSubmit" class="btn-primary">
-                    <i class="ti ti-rocket"></i> আমার শপ ও AI ড্যাশবোর্ড তৈরি করুন
-                </button>
-            </form>
-
-            <div id="resultBox" class="feedback-box"></div>
+            <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">🛍️ শুধুমাত্র আপনার তৈরি করা শপ ও ড্যাশবোর্ডসমূহ:</div>
+            <div id="myStoresList" class="stores-grid"></div>
         </section>
 
-        <!-- ডান পাশে: AI Website Link Analyzer -->
-        <aside class="card" style="margin-bottom:0;">
-            <h2><i class="ti ti-world-search"></i> AI ওয়েবসাইট লিংক অ্যানালাইজার</h2>
+        <div class="main-grid">
+            <section class="card" style="margin-bottom:0;">
+                <span class="hero-badge"><i class="ti ti-sparkles"></i> ১ ক্লিকে ই-কমার্স শপ + WhatsApp AI বট</span>
+                <h1>নিজের অনলাইন শপ ও AI সেলস অ্যাসিস্ট্যান্ট তৈরি করুন</h1>
+                <p class="lead">
+                    ওয়েবসাইট থাকুক বা না থাকুক—৩০ সেকেন্ডে নিজস্ব শপ লিংক (<code>/myshop</code>) এবং স্বয়ংক্রিয় হোয়াটসঅ্যাপ রিপ্লাই সিস্টেম চালু করুন।
+                </p>
+
+                <form onsubmit="handleLaunch(event)">
+                    <div class="form-group">
+                        <label>বট / শপের ধরন নির্বাচন করুন:</label>
+                        <select id="botType" onchange="toggleBotFields()">
+                            <option value="catalog_link">📦 ডিজিটাল ক্যাটালগ / ই-কমার্স শপ (ওয়েবসাইট ছাড়া)</option>
+                            <option value="business_site">🌐 আমার ওয়েবসাইট আছে (Website URL)</option>
+                            <option value="personal">👤 পার্সোনাল ইউজার (ব্যক্তিগত AI সহকারী)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="catalogUrlGroup">
+                        <label>ক্যাটালগ লিংক (ঐচ্ছিক — ড্যাশবোর্ড থেকেও পণ্য যোগ করা যাবে):</label>
+                        <input type="text" id="catalogUrl" placeholder="যেমন: https://techxzonee.shop/catalog/ss">
+                        <small style="display:block; margin-top:6px; color:#059669; font-weight:700; font-size:12.5px;">
+                            👉 ক্যাটালগ লিংক নেই? <a href="/catalog-builder" target="_blank" style="color:#047857; text-decoration:underline;">২ মিনিটে ক্যাটালগ তৈরি করুন</a>
+                        </small>
+                    </div>
+
+                    <div class="form-group" id="siteUrlGroup" style="display:none;">
+                        <label>ওয়েবসাইট লিংক (যা এআই অটো-রিড করবে):</label>
+                        <input type="url" id="siteUrl" placeholder="https://yourwebsite.com">
+                    </div>
+
+                    <div class="form-group" id="manualDetailsGroup" style="display:none;">
+                        <label>নিজের বায়ো বা এআই নির্দেশিকা লিখে দিন:</label>
+                        <textarea id="manualDetails" rows="3" placeholder="যেমন: আমি ব্যস্ত থাকলে বন্ধুদের বলবে পরে কল দিতে।"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label id="lblBizName">শপ বা ব্যবসার নাম:</label>
+                        <input type="text" id="bizName" required placeholder="যেমন: My Fashion Shop">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>শপ স্লাগ / নাম (Slug):</label>
+                            <input type="text" id="subdomain" required placeholder="যেমন: myshop" oninput="updateUrlPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>ডোমেইন নির্বাচন করুন:</label>
+                            <select id="baseDomain" onchange="updateUrlPreview()"></select>
+                        </div>
+                    </div>
+
+                    <div class="url-preview-box">
+                        🛍️ <b>আপনার শপ লিংক হবে:</b> <code id="previewShopUrl"></code><br>
+                        🎛️ <b>ওনার ড্যাশবোর্ড হবে:</b> <code id="previewDashUrl"></code>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="btn-primary">
+                        <i class="ti ti-rocket"></i> আমার শপ ও AI ড্যাশবোর্ড তৈরি করুন
+                    </button>
+                </form>
+
+                <div id="resultBox" class="feedback-box"></div>
+            </section>
+
+            <aside class="card" style="margin-bottom:0;">
+                <h2><i class="ti ti-world-search"></i> AI ওয়েবসাইট লিংক অ্যানালাইজার</h2>
+                <p class="lead" style="margin-bottom:14px;">
+                    যেকোনো ই-কমার্স বা বিজনেস ওয়েবসাইটের লিংক দিয়ে দেখুন আমাদের Gemini AI কীভাবে ব্যবসার ধরন ও পণ্য শনাক্ত করে:
+                </p>
+                <div class="form-group">
+                    <label>ওয়েবসাইট URL লিখুন:</label>
+                    <input type="url" id="analyzerUrl" placeholder="https://example.com">
+                </div>
+                <button type="button" id="btnAnalyze" onclick="analyzeSitePreview()" class="btn-blue">
+                    <i class="ti ti-sparkles"></i> ওয়েবসাইট অ্যানালাইজ করুন
+                </button>
+
+                <div id="analyzerResult" class="feedback-box feedback-success" style="margin-top:16px;"></div>
+
+                <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(203,213,225,0.6);">
+                    <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">✨ প্ল্যাটফর্মের মূল সুবিধাসমূহ:</div>
+                    <ul style="font-size:13px; font-weight:700; color:#334155; padding-left:18px; line-height:1.9;">
+                        <li>১ ক্লিকে নিজস্ব শপ (<code>domain.com/myshop</code>) ও প্রোডাক্ট লিংক</li>
+                        <li>২৪/৭ অটোমেটিক WhatsApp AI সাপোর্ট ও ভয়েস/ছবি বুঝে রিপ্লাই</li>
+                        <li>সরাসরি WhatsApp-এ লাইভ অর্ডার অ্যালার্ট নোটিফিকেশন</li>
+                        <li>ওয়েবসাইট ও মোবাইল অ্যাপ বানানোর জন্য নিজস্ব REST API</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+
+        <!-- 💻 Developer Docs (Website & Mobile App Builder) -->
+        <section id="developer-docs" class="card" style="margin-top:22px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <h2 style="margin:0;"><i class="ti ti-code"></i> ডেভেলপার ডকুমেন্টেশন (Website & App Builder API)</h2>
+                <a href="/api/v1/docs" target="_blank" class="pill-status" style="text-decoration:none;">📖 Interactive RapiDoc খুলুন</a>
+            </div>
             <p class="lead" style="margin-bottom:14px;">
-                যেকোনো ই-কমার্স বা বিজনেস ওয়েবসাইটের লিংক দিয়ে দেখুন আমাদের Gemini AI কীভাবে স্বয়ংক্রিয়ভাবে ব্যবসার ধরন ও পণ্য শনাক্ত করে:
+                আমাদের প্ল্যাটফর্মের ইউনিভার্সাল ক্লাউড API ব্যবহার করে সহজেই নিজস্ব <b>Android / iOS মোবাইল অ্যাপ</b> অথবা <b>কাস্টম ওয়েবসাইট</b> তৈরি করতে পারবেন:
             </p>
-            <div class="form-group">
-                <label>ওয়েবসাইট URL লিখুন:</label>
-                <input type="url" id="analyzerUrl" placeholder="https://example.com">
-            </div>
-            <button type="button" id="btnAnalyze" onclick="analyzeSitePreview()" class="btn-blue">
-                <i class="ti ti-sparkles"></i> ওয়েবসাইট অ্যানালাইজ করুন
-            </button>
 
-            <div id="analyzerResult" class="feedback-box feedback-success" style="margin-top:16px;"></div>
-
-            <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(203,213,225,0.6);">
-                <div style="font-size:14px; font-weight:800; color:#065f46; margin-bottom:8px;">✨ প্ল্যাটফর্মের মূল সুবিধাসমূহ:</div>
-                <ul style="font-size:13px; font-weight:700; color:#334155; padding-left:18px; line-height:1.9;">
-                    <li>১ ক্লিকে নিজস্ব শপ (<code>domain.com/myshop</code>) ও প্রোডাক্ট লিংক</li>
-                    <li>২৪/৭ অটোমেটিক WhatsApp AI কাস্টমার সাপোর্ট ও ভয়েস/ছবি বুঝে রিপ্লাই</li>
-                    <li>সরাসরি WhatsApp-এ লাইভ অর্ডার অ্যালার্ট নোটিফিকেশন</li>
-                    <li>ওয়েবসাইট ও মোবাইল অ্যাপ বানানোর জন্য নিজস্ব REST API</li>
-                </ul>
-            </div>
-        </aside>
-    </div>
-
-    <!-- অ্যাক্টিভ স্টোরস শোকেস -->
-    <section class="card" style="margin-top:22px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <h2 style="margin:0;"><i class="ti ti-building-store"></i> অ্যাক্টিভ শপ শোকেস</h2>
-            <span class="pill-status" id="storeCountBadge">লোড হচ্ছে...</span>
-        </div>
-        <div id="storesShowcase" class="stores-grid">
-            <div style="grid-column:1/-1; text-align:center; padding:24px; color:#475569; font-size:13.5px;">স্টোর তালিকা লোড হচ্ছে...</div>
-        </div>
-    </section>
-
-    <!-- 💻 Developer Docs (Website & Mobile App Builder) -->
-    <section id="developer-docs" class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-            <h2 style="margin:0;"><i class="ti ti-code"></i> ডেভেলপার ডকুমেন্টেশন (Website & App Builder API)</h2>
-            <a href="/api/v1/docs" target="_blank" class="pill-status" style="text-decoration:none;">📖 Interactive RapiDoc খুলুন</a>
-        </div>
-        <p class="lead" style="margin-bottom:14px;">
-            আমাদের প্ল্যাটফর্মের ইউনিভার্সাল ক্লাউড API ব্যবহার করে সহজেই নিজস্ব <b>Android / iOS মোবাইল অ্যাপ</b> অথবা <b>কাস্টম React / Next.js / WordPress ওয়েবসাইট</b> তৈরি করতে পারবেন:
-        </p>
-
-        <div class="dev-ep-grid">
-            <div class="dev-box">
-                <div style="font-size:14px; font-weight:800; color:#065f46;">১. Authentication Headers</div>
-                <p style="font-size:12.5px; color:#475569; margin-top:4px;">প্রতিটি API রিকোয়েস্টে এই দুটি হেডার পাঠাতে হবে:</p>
-                <div class="dev-terminal">Base URL: <span id="devBaseUrl"></span>/api/v1
+            <div class="dev-ep-grid">
+                <div class="dev-box">
+                    <div style="font-size:14px; font-weight:800; color:#065f46;">১. Authentication Headers</div>
+                    <div class="dev-terminal">Base URL: <span id="devBaseUrl"></span>/api/v1
 X-API-KEY: your_live_api_key
 X-SECRET-KEY: your_secret_key</div>
-            </div>
-
-            <div class="dev-box">
-                <div style="font-size:14px; font-weight:800; color:#065f46;">২. মূল API Endpoints</div>
-                <div class="dev-terminal">GET  /api/v1/products          (সব পণ্য)
+                </div>
+                <div class="dev-box">
+                    <div style="font-size:14px; font-weight:800; color:#065f46;">২. মূল API Endpoints</div>
+                    <div class="dev-terminal">GET  /api/v1/products
 GET  /api/v1/products/search?q=watch
-POST /api/v1/products          (নতুন পণ্য)
-GET  /api/v1/categories        (ক্যাটাগরি)
-GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
+POST /api/v1/products
+GET  /api/v1/categories
+GET  /api/v1/inventory</div>
+                </div>
             </div>
-        </div>
 
-        <div class="dev-box" style="margin-top:14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:14px; font-weight:800; color:#065f46;">৩. ওয়েবসাইট বা মোবাইল অ্যাপে প্রোডাক্ট লোড করার উদাহরণ (JavaScript / Fetch)</span>
-                <button type="button" onclick="copyDevSnippet()" class="btn-nav" style="padding:5px 12px; font-size:12px;"><i class="ti ti-copy"></i> কোড কপি</button>
-            </div>
-            <pre class="dev-terminal" id="devCodeSnippet">fetch('/api/v1/products?page=1&limit=20', {
+            <div class="dev-box" style="margin-top:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:14px; font-weight:800; color:#065f46;">৩. ওয়েবসাইট বা মোবাইল অ্যাপে প্রোডাক্ট লোড করার কোড</span>
+                    <button type="button" onclick="copyDevSnippet()" class="btn-nav" style="padding:5px 12px; font-size:12px;"><i class="ti ti-copy"></i> কোড কপি</button>
+                </div>
+                <pre class="dev-terminal" id="devCodeSnippet">fetch('/api/v1/products?page=1&limit=20', {
   headers: {
     'X-API-KEY': 'YOUR_API_KEY',
     'X-SECRET-KEY': 'YOUR_SECRET_KEY'
@@ -431,8 +384,9 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
 })
 .then(res => res.json())
 .then(data => console.log('Products:', data.data));</pre>
-        </div>
-    </section>
+            </div>
+        </section>
+    </div>
 
     <!-- ফুটার ও প্রিমিয়াম ব্র্যান্ডিং -->
     <footer class="brand-footer">
@@ -491,22 +445,22 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
             if (d.success && d.user) {
                 currentAuthUser = d.user;
                 document.getElementById('authSection').style.display = 'none';
-                document.getElementById('myAccountPanel').style.display = 'block';
+                document.getElementById('protectedWorkspace').style.display = 'block';
+                document.getElementById('headerProtectedNav').style.display = 'flex';
                 document.getElementById('userDisplayName').textContent = d.user.name || d.user.email;
                 document.getElementById('userDisplayEmail').textContent = d.user.email;
-                document.getElementById('headerUserArea').innerHTML = `
+                document.getElementById('headerUserBadge').innerHTML = `
                     <span class="pill-status" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">
                         👤 ${escapeHtml(d.user.name || d.user.email)}
                     </span>
                 `;
                 renderMyStores(d.myStores || []);
+                loadActiveDomains();
             } else {
                 currentAuthUser = null;
                 document.getElementById('authSection').style.display = 'block';
-                document.getElementById('myAccountPanel').style.display = 'none';
-                document.getElementById('headerUserArea').innerHTML = `
-                    <a href="#authSection" class="btn-nav" style="background:#dcfce7; color:#065f46; border-color:#86efac;"><i class="ti ti-user-circle"></i> লগইন / রেজিস্টার</a>
-                `;
+                document.getElementById('protectedWorkspace').style.display = 'none';
+                document.getElementById('headerProtectedNav').style.display = 'none';
             }
         } catch (e) {}
     }
@@ -514,7 +468,7 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
     function renderMyStores(stores) {
         const container = document.getElementById('myStoresList');
         if (!stores || stores.length === 0) {
-            container.innerHTML = `<div style="grid-column:1/-1; padding:14px; font-size:13px; color:#475569; background:rgba(255,255,255,0.6); border-radius:12px;">আপনার অ্যাকাউন্টে এখনো কোনো শপ তৈরি করা হয়নি। নিচের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
+            container.innerHTML = `<div style="grid-column:1/-1; padding:14px; font-size:13px; color:#475569; background:rgba(255,255,255,0.65); border-radius:12px;">আপনার অ্যাকাউন্টে এখনো কোনো শপ তৈরি করা হয়নি। নিচের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
             return;
         }
         container.innerHTML = stores.map(s => {
@@ -526,7 +480,7 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
                 <div>
                     <div class="store-title">${escapeHtml(s.bot_name)}</div>
                     <div class="store-url">${escapeHtml(dom)}/${escapeHtml(s.subdomain)}</div>
-                    <div style="font-size:11.5px; color:#475569; margin-top:4px;">স্ট্যাটাস: <b>${escapeHtml(s.status || 'DISCONNECTED')}</b></div>
+                    <div style="font-size:12px; color:#475569; margin-top:4px;">স্ট্যাটাস: <b>${escapeHtml(s.status || 'DISCONNECTED')}</b></div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                     <a href="${escapeHtml(shopUrl)}" target="_blank" class="btn-visit">🛍️ শপ</a>
@@ -586,25 +540,11 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
 
     function toggleBotFields() {
         const type = document.getElementById('botType').value;
-        const siteGrp = document.getElementById('siteUrlGroup');
-        const manualGrp = document.getElementById('manualDetailsGroup');
-        const catGrp = document.getElementById('catalogUrlGroup');
-        const lblBiz = document.getElementById('lblBizName');
-
-        siteGrp.style.display = 'none';
-        manualGrp.style.display = 'none';
-        catGrp.style.display = 'none';
-
-        if (type === 'catalog_link') {
-            catGrp.style.display = 'block';
-            lblBiz.textContent = 'দোকান / শপের নাম:';
-        } else if (type === 'business_site') {
-            siteGrp.style.display = 'block';
-            lblBiz.textContent = 'ব্যবসার নাম / শপের নাম:';
-        } else {
-            manualGrp.style.display = 'block';
-            lblBiz.textContent = 'আপনার নিজের নাম:';
-        }
+        document.getElementById('siteUrlGroup').style.display = type === 'business_site' ? 'block' : 'none';
+        document.getElementById('manualDetailsGroup').style.display = type === 'personal' ? 'block' : 'none';
+        document.getElementById('catalogUrlGroup').style.display = type === 'catalog_link' ? 'block' : 'none';
+        document.getElementById('lblBizName').textContent =
+            type === 'personal' ? 'আপনার নিজের নাম:' : (type === 'business_site' ? 'ব্যবসার নাম / শপের নাম:' : 'দোকান / শপের নাম:');
     }
 
     function updateUrlPreview() {
@@ -618,7 +558,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
         const select = document.getElementById('baseDomain');
         select.innerHTML = `<option value="${escapeHtml(CURRENT_HOST)}" selected>${escapeHtml(CURRENT_HOST)} (Default)</option>`;
         updateUrlPreview();
-
         try {
             const res = await fetch('/api/domains/active');
             const d = await res.json();
@@ -633,41 +572,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
         } catch (e) {}
     }
 
-    async function loadPublicStores() {
-        const container = document.getElementById('storesShowcase');
-        const badge = document.getElementById('storeCountBadge');
-        try {
-            const res = await fetch('/api/public/stores');
-            const d = await res.json();
-            const stores = d.stores || [];
-            badge.textContent = `${stores.length}টি অ্যাক্টিভ শপ`;
-
-            if (stores.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:26px; color:#475569; font-size:13.5px;">এখনো কোনো শপ তৈরি হয়নি। উপরের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
-                return;
-            }
-
-            container.innerHTML = stores.map(s => {
-                const dom = s.base_domain || CURRENT_HOST;
-                const sub = s.subdomain || '';
-                const url = `https://${dom}/${sub}`;
-                return `
-                <div class="store-tile">
-                    <div>
-                        <div class="store-title">${escapeHtml(s.bot_name)}</div>
-                        <div class="store-url">${escapeHtml(dom)}/${escapeHtml(sub)}</div>
-                        <div style="font-size:12px; color:#475569; margin-top:6px;">📦 ${Number(s.product_count || 0)}টি পণ্য</div>
-                    </div>
-                    <a href="${escapeHtml(url)}" target="_blank" class="btn-visit">
-                        <i class="ti ti-external-link"></i> শপ ভিজিট করুন
-                    </a>
-                </div>`;
-            }).join('');
-        } catch (e) {
-            badge.textContent = 'অফলাইন';
-        }
-    }
-
     async function analyzeSitePreview() {
         const url = document.getElementById('analyzerUrl').value.trim();
         if (!url) return alert('ওয়েবসাইট লিংক দিন!');
@@ -675,7 +579,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
         const box = document.getElementById('analyzerResult');
         btn.disabled = true;
         btn.innerHTML = '<i class="ti ti-loader"></i> অ্যানালাইজ হচ্ছে...';
-
         try {
             const res = await fetch('/api/public/analyze-site', {
                 method: 'POST',
@@ -709,11 +612,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
 
     async function handleLaunch(e) {
         e.preventDefault();
-        if (!currentAuthUser) {
-            document.getElementById('authSection').scrollIntoView({ behavior: 'smooth' });
-            return showAuthFeedback('🔒 শপ তৈরি করার আগে অনুগ্রহ করে লগইন অথবা নতুন অ্যাকাউন্ট তৈরি করুন!', false);
-        }
-
         const btn = document.getElementById('btnSubmit');
         const box = document.getElementById('resultBox');
         btn.innerHTML = '<i class="ti ti-loader"></i> তৈরি হচ্ছে... অপেক্ষা করুন';
@@ -746,7 +644,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
                     🎛️ <b>ওনার ড্যাশবোর্ড:</b> <a href="${escapeHtml(result.dashboardUrl)}" target="_blank" style="color:#0284c7; font-weight:800;">${escapeHtml(result.dashboardUrl)}</a>
                 `;
                 loadCurrentSession();
-                loadPublicStores();
             } else {
                 box.className = 'feedback-box feedback-error';
                 box.textContent = result.message || 'ত্রুটি ঘটেছে!';
@@ -767,8 +664,6 @@ GET  /api/v1/inventory         (স্টক রিপোর্ট)</div>
     }
 
     loadCurrentSession();
-    loadActiveDomains();
-    loadPublicStores();
 </script>
 </body>
 </html>
