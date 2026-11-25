@@ -670,10 +670,10 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     .stat-lbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     .stat-val { font-size: 24px; font-weight: 800; color: #059669; margin-top: 6px; }
 
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 18px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 6px; margin-bottom: 18px; }
     .tab-btn {
-      width: auto; background: rgba(255,255,255,0.75); color: #475569; border: 1px solid rgba(226,232,240,0.9);
-      padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
+      flex: 1 1 auto; justify-content: center; background: rgba(255,255,255,0.75); color: #475569; border: 1px solid rgba(226,232,240,0.9);
+      padding: 10px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
       box-shadow: none; display: inline-flex; align-items: center; gap: 6px;
     }
     .tab-btn.active { background: linear-gradient(135deg, #059669, #047857); color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(5,150,105,0.28); }
@@ -771,9 +771,12 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </div>
 
     <div class="card" style="border:1.5px solid rgba(16,185,129,0.5);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
         <h3 style="margin:0;"><i class="ti ti-messages"></i> লাইভ এআই টেস্ট চ্যাট</h3>
-        <span style="font-size:11px; padding:4px 10px; border-radius:999px; background:#dcfce7; color:#15803d; font-weight:700;">● AI Active</span>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button type="button" onclick="switchDashTab('pane-billing', document.querySelectorAll('.tab-btn')[3])" style="padding:4px 10px; border-radius:999px; background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-size:11px; font-weight:800; cursor:pointer;">🔑 API Key দিন</button>
+          <span style="font-size:11px; padding:4px 10px; border-radius:999px; background:#dcfce7; color:#15803d; font-weight:700;">● AI Active</span>
+        </div>
       </div>
       <div id="testChatWindow" style="background:rgba(255,255,255,0.8); border:1px solid rgba(203,213,225,0.8); border-radius:14px; padding:14px; height:180px; overflow-y:auto; margin-bottom:10px; font-size:13px;">
         <div style="color:#64748b; font-style:italic;">বটের সাথে কথা বলতে নিচে মেসেজ লিখুন...</div>
@@ -1339,30 +1342,35 @@ async function executeGeminiForTenant(botRow, userPrompt, systemPrompt, imageBuf
     .filter(k => k.length > 20);
 
   if (customKeys.length > 0) {
+    const modelsToTry = [GEMINI_MODEL, ...(GEMINI_FALLBACK_MODELS || [])].filter(Boolean);
     for (let i = 0; i < customKeys.length; i++) {
       const activeKey = customKeys[i];
-      try {
-        const client = new GoogleGenAI({ apiKey: activeKey });
-        const contents = [];
-        if (imageBuffer) contents.push({ inlineData: { data: imageBuffer.toString('base64'), mimeType: imageMime } });
-        contents.push(userPrompt);
+      const client = new GoogleGenAI({ apiKey: activeKey });
+      const contents = [];
+      if (imageBuffer) contents.push({ inlineData: { data: imageBuffer.toString('base64'), mimeType: imageMime } });
+      contents.push(userPrompt);
 
-        const response = await client.models.generateContent({
-          model: GEMINI_MODEL || 'gemini-2.5-flash',
-          contents,
-          config: {
-            systemInstruction: safeInstruction,
-            temperature: 0.35,
-            maxOutputTokens: 1200
-          }
-        });
+      for (const modelId of modelsToTry) {
+        try {
+          const response = await client.models.generateContent({
+            model: modelId,
+            contents,
+            config: {
+              systemInstruction: safeInstruction,
+              temperature: 0.35,
+              maxOutputTokens: 1200
+            }
+          });
 
-        reply = response.text?.trim() || response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-        usedTokens = response.usageMetadata?.totalTokenCount || 50;
-        if (reply) break;
-      } catch (err) {
-        addBotLog(botRow.id, 'warn', `⚠️ Key #${i + 1} ফেইল: ${err.message} (পরবর্তী কী দিয়ে চেষ্টা চলছে...)`);
+          reply = response.text?.trim() || response.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+          usedTokens = response.usageMetadata?.totalTokenCount || 50;
+          if (reply) break;
+        } catch (err) {
+          if ((err.message || '').includes('429')) break;
+        }
       }
+      if (reply) break;
+      addBotLog(botRow.id, 'warn', `⚠️ Personal Key #${i + 1} কাজ করেনি, পরবর্তী Key দেখা হচ্ছে...`);
     }
   }
 
@@ -1373,6 +1381,10 @@ async function executeGeminiForTenant(botRow, userPrompt, systemPrompt, imageBuf
     } catch (fallbackErr) {
       addBotLog(botRow.id, 'warn', `প্ল্যাটফর্ম ব্যাকআপ এরর: ${fallbackErr.message}`);
     }
+  }
+
+  if (!reply) {
+    return '⚠️ কোনো Gemini API Key সেট করা নেই! অনুগ্রহ করে "প্রিমিয়াম ও API Key" ট্যাবে আপনার Gemini API Key বসিয়ে সেভ করুন।';
   }
 
   try {
@@ -2767,4 +2779,3 @@ app.listen(PORT, '0.0.0.0', async () => {
     console.error('[STARTUP INIT ERROR]:', e.message);
   }
 });
-m
