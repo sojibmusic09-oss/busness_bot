@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeSite — One-Click Shop & AI WhatsApp Bot Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-deep: #065f46;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-subtle: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.85);
+            --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text);
+            padding: 18px 14px;
+            min-height: 100vh;
+            line-height: 1.55;
+        }
+        .container { max-width: 1020px; margin: 0 auto; }
+
+        /* Sticky Glass Header */
+        .glass-header {
+            position: sticky; top: 12px; z-index: 50;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 14px 20px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+            margin-bottom: 24px;
+            box-shadow: var(--glass-shadow);
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; color: var(--primary-deep); text-decoration: none; }
+        .brand-icon {
+            width: 38px; height: 38px; border-radius: 12px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px;
+            box-shadow: 0 6px 14px rgba(5, 150, 105, 0.28);
+        }
+        .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .pill-status {
+            padding: 6px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
+            background: rgba(220, 252, 231, 0.85); color: #15803d; border: 1px solid #bbf7d0;
+        }
+        .btn-nav {
+            padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+            background: rgba(255, 255, 255, 0.88); color: #0f172a; border: 1px solid rgba(203, 213, 225, 0.9);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: .2s;
+        }
+        .btn-nav:hover { background: #fff; border-color: var(--primary); color: var(--primary); }
+
+        /* Main Layout Grid */
+        .main-grid { display: grid; grid-template-columns: 1fr; gap: 22px; margin-bottom: 24px; }
+        @media (min-width: 840px) { .main-grid { grid-template-columns: 1.25fr 0.95fr; align-items: start; } }
+
+        /* Glass Card */
+        .card {
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 22px; padding: 26px;
+            box-shadow: var(--glass-shadow); transition: .2s;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+            background: rgba(236, 253, 245, 0.9); color: #047857; border: 1px solid #a7f3d0;
+            font-size: 11px; font-weight: 800; margin-bottom: 12px;
+        }
+        h1 { font-size: 25px; font-weight: 800; color: #0f172a; line-height: 1.3; margin-bottom: 8px; }
+        h2 { font-size: 18px; font-weight: 800; color: var(--primary-deep); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .lead { font-size: 13.5px; color: var(--muted); margin-bottom: 20px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12.5px; color: #334155; margin-bottom: 6px; font-weight: 700; }
+        input, select, textarea {
+            width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 12px; font-size: 14px;
+            color: var(--text); outline: none; transition: .2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            background: #fff; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 520px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        .url-preview-box {
+            background: rgba(240, 253, 244, 0.85); border: 2px dashed #059669;
+            border-radius: 14px; padding: 12px 14px; margin-bottom: 16px;
+            font-size: 12px; color: #065f46; line-height: 1.6;
+        }
+        .url-preview-box code {
+            background: rgba(255, 255, 255, 0.9); padding: 2px 7px; border-radius: 6px;
+            font-weight: 700; color: #047857; word-break: break-all;
+        }
+
+        .btn-primary {
+            width: 100%; padding: 14px 18px;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 13px;
+            font-weight: 800; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 8px 22px rgba(5, 150, 105, 0.3); transition: .2s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(5, 150, 105, 0.4); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .btn-blue {
+            width: 100%; padding: 12px 16px;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25); transition: .2s;
+        }
+
+        .feedback-box {
+            display: none; margin-top: 16px; padding: 16px; border-radius: 14px; font-size: 13px; line-height: 1.65;
+        }
+        .feedback-success { background: rgba(220, 252, 231, 0.92); border: 1px solid #86efac; color: #065f46; }
+        .feedback-error { background: rgba(254, 226, 226, 0.92); border: 1px solid #fca5a5; color: #b91c1c; }
+
+        /* Stores Showcase Grid */
+        .stores-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 14px;
+        }
+        .store-tile {
+            background: var(--glass-subtle); backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px;
+            display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+            transition: .2s; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+        }
+        .store-tile:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.88); }
+        .store-title { font-size: 15px; font-weight: 800; color: #0f172a; }
+        .store-url { font-size: 12px; color: #059669; font-weight: 700; word-break: break-all; margin-top: 3px; }
+        .store-meta { font-size: 11px; color: var(--muted); font-weight: 700; }
+        .btn-visit {
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%;
+            padding: 9px; border-radius: 10px; background: rgba(236, 253, 245, 0.9); color: #047857;
+            border: 1px solid #a7f3d0; font-size: 12px; font-weight: 800; text-decoration: none;
+        }
+
+        .creator-badge {
+            text-align: center; padding: 22px 0; font-size: 12px; color: var(--muted); margin-top: 10px;
+        }
+        .creator-badge a { color: #059669; text-decoration: none; font-weight: 700; margin: 0 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Sticky Frosted Glass Header (NO Super Admin button) -->
+    <header class="glass-header">
+        <a href="/" class="brand">
+            <span class="brand-icon"><i class="ti ti-brand-whatsapp"></i></span>
+            <span>FreeSite AI</span>
+        </a>
+        <div class="header-right">
+            <span class="pill-status">● Platform Live</span>
+            <a href="/catalog-builder" class="btn-nav"><i class="ti ti-box"></i> ক্যাটালগ বিল্ডার</a>
+        </div>
+    </header>
+
+    <div class="main-grid">
+        <!-- Left: Hero + One-Click Shop & Bot Builder -->
+        <section class="card">
+            <span class="hero-badge"><i class="ti ti-sparkles"></i> ১ ক্লিকে ই-কমার্স শপ + WhatsApp AI বট</span>
+            <h1>নিজের অনলাইন শপ ও AI সেলস অ্যাসিস্ট্যান্ট তৈরি করুন</h1>
+            <p class="lead">
+                ওয়েবসাইট থাকুক বা না থাকুক—৩০ সেকেন্ডে নিজস্ব শপ লিংক (<code>/myshop</code>) এবং স্বয়ংক্রিয় হোয়াটসঅ্যাপ রিপ্লাই সিস্টেম চালু করুন।
+            </p>
+
+            <form onsubmit="handleLaunch(event)">
+                <div class="form-group">
+                    <label>বট / শপের ধরন নির্বাচন করুন:</label>
+                    <select id="botType" onchange="toggleBotFields()">
+                        <option value="catalog_link">📦 ডিজিটাল ক্যাটালগ / ই-কমার্স শপ (ওয়েবসাইট ছাড়া)</option>
+                        <option value="business_site">🌐 আমার ওয়েবসাইট আছে (Website URL)</option>
+                        <option value="personal">👤 পার্সোনাল ইউজার (ব্যক্তিগত AI সহকারী)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="catalogUrlGroup">
+                    <label>ক্যাটালগ লিংক (ঐচ্ছিক — ড্যাশবোর্ড থেকেও পণ্য যোগ করা যাবে):</label>
+                    <input type="text" id="catalogUrl" placeholder="যেমন: https://sojib.de5.net/catalog/myshop">
+                    <small style="display:block; margin-top:5px; color:#059669; font-weight:700; font-size:12px;">
+                        👉 ক্যাটালগ লিংক নেই? <a href="/catalog-builder" target="_blank" style="color:#047857; text-decoration:underline;">২ মিনিটে ক্যাটালগ তৈরি করুন</a>
+                    </small>
+                </div>
+
+                <div class="form-group" id="siteUrlGroup" style="display:none;">
+                    <label>ওয়েবসাইট লিংক (যা এআই অটো-রিড করবে):</label>
+                    <input type="url" id="siteUrl" placeholder="https://yourwebsite.com">
+                </div>
+
+                <div class="form-group" id="manualDetailsGroup" style="display:none;">
+                    <label>নিজের বায়ো বা এআই নির্দেশিকা লিখে দিন:</label>
+                    <textarea id="manualDetails" rows="3" placeholder="যেমন: আমি ব্যস্ত থাকলে বন্ধুদের বলবে পরে কল দিতে।"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label id="lblBizName">শপ বা ব্যবসার নাম:</label>
+                    <input type="text" id="bizName" required placeholder="যেমন: My Fashion Shop">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>শপ স্লাগ / নাম (Slug):</label>
+                        <input type="text" id="subdomain" required placeholder="যেমন: myshop" oninput="updateUrlPreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>ডোমেইন নির্বাচন করুন:</label>
+                        <select id="baseDomain" onchange="updateUrlPreview()">
+                            <option value="sojib.de5.net">sojib.de5.net</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Live URL Preview -->
+                <div class="url-preview-box">
+                    🛍️ <b>আপনার শপ লিংক হবে:</b> <code id="previewShopUrl">https://sojib.de5.net/myshop</code><br>
+                    🎛️ <b>ওনার ড্যাশবোর্ড হবে:</b> <code id="previewDashUrl">https://sojib.de5.net/dash/myshop</code>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-primary">
+                    <i class="ti ti-rocket"></i> CREATE MY SHOP & AI DASHBOARD
+                </button>
+            </form>
+
+            <div id="resultBox" class="feedback-box"></div>
+        </section>
+
+        <!-- Right: AI Website Link Analyzer Card -->
+        <aside class="card">
+            <h2><i class="ti ti-world-search"></i> AI Website Link Analyzer</h2>
+            <p class="lead" style="margin-bottom:14px;">
+                যেকোনো ই-কমার্স বা বিজনেস ওয়েবসাইটের লিংক দিয়ে দেখুন আমাদের Gemini AI কীভাবে স্বয়ংক্রিয়ভাবে ব্যবসার ধরন ও পণ্য শনাক্ত করে:
+            </p>
+            <div class="form-group">
+                <label>ওয়েবসাইট URL লিখুন:</label>
+                <input type="url" id="analyzerUrl" placeholder="https://example.com">
+            </div>
+            <button type="button" id="btnAnalyze" onclick="analyzeSitePreview()" class="btn-blue">
+                <i class="ti ti-sparkles"></i> ওয়েবসাইট অ্যানালাইজ করুন
+            </button>
+
+            <div id="analyzerResult" class="feedback-box feedback-success" style="margin-top:16px;"></div>
+
+            <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(203,213,225,0.6);">
+                <div style="font-size:13px; font-weight:800; color:#065f46; margin-bottom:8px;">✨ প্ল্যাটফর্মের মূল সুবিধাসমূহ:</div>
+                <ul style="font-size:12.5px; color:#475569; padding-left:18px; line-height:1.8;">
+                    <li>১ ক্লিকে নিজস্ব শপ (<code>domain.com/myshop</code>) ও প্রোডাক্ট লিংক</li>
+                    <li>২৪/৭ অটোমেটিক WhatsApp AI কাস্টমার সাপোর্ট ও ভয়েস/ছবি বুঝে রিপ্লাই</li>
+                    <li>সরাসরি WhatsApp-এ লাইভ অর্ডার অ্যালার্ট নোটিফিকেশন</li>
+                    <li>bKash / Nagad / Rocket প্রিমিয়াম সাপোর্ট</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Active Stores Showcase Grid -->
+    <section class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h2 style="margin:0;"><i class="ti ti-building-store"></i> অ্যাক্টিভ শপ শোকেস (Active Stores)</h2>
+            <span class="pill-status" id="storeCountBadge">লোড হচ্ছে...</span>
+        </div>
+        <div id="storesShowcase" class="stores-grid">
+            <div style="grid-column:1/-1; text-align:center; padding:24px; color:#64748b; font-size:13px;">স্টোর তালিকা লোড হচ্ছে...</div>
+        </div>
+    </section>
+
+    <footer class="creator-badge">
+        <span>Architect: <b>Sojib</b></span> •
+        <a href="https://wa.me/8801409084819" target="_blank"><i class="ti ti-brand-whatsapp"></i> 01409084819</a> •
+        <a href="https://tiktok.com/@sojib..music" target="_blank"><i class="ti ti-brand-tiktok"></i> @sojib..music</a>
+    </footer>
+</div>
+
+<script>
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function toggleBotFields() {
+        const type = document.getElementById('botType').value;
+        const siteGrp = document.getElementById('siteUrlGroup');
+        const manualGrp = document.getElementById('manualDetailsGroup');
+        const catGrp = document.getElementById('catalogUrlGroup');
+        const lblBiz = document.getElementById('lblBizName');
+
+        siteGrp.style.display = 'none';
+        manualGrp.style.display = 'none';
+        catGrp.style.display = 'none';
+
+        if (type === 'catalog_link') {
+            catGrp.style.display = 'block';
+            lblBiz.textContent = 'দোকান / শপের নাম:';
+        } else if (type === 'business_site') {
+            siteGrp.style.display = 'block';
+            lblBiz.textContent = 'ব্যবসার নাম / শপের নাম:';
+        } else {
+            manualGrp.style.display = 'block';
+            lblBiz.textContent = 'আপনার নিজের নাম:';
+        }
+    }
+
+    function updateUrlPreview() {
+        const slug = (document.getElementById('subdomain').value || 'myshop').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'myshop';
+        const dom = document.getElementById('baseDomain').value || 'sojib.de5.net';
+        document.getElementById('previewShopUrl').textContent = `https://${dom}/${slug}`;
+        document.getElementById('previewDashUrl').textContent = `https://${dom}/dash/${slug}`;
+    }
+
+    async function loadActiveDomains() {
+        try {
+            const res = await fetch('/api/domains/active');
+            const d = await res.json();
+            if (d.success && Array.isArray(d.domains) && d.domains.length > 0) {
+                const select = document.getElementById('baseDomain');
+                const currentHost = window.location.hostname.replace(/^www\./, '').toLowerCase();
+                select.innerHTML = d.domains.map(dom =>
+                    `<option value="${escapeHtml(dom)}" ${dom === currentHost ? 'selected' : ''}>${escapeHtml(dom)}</option>`
+                ).join('');
+                updateUrlPreview();
+            }
+        } catch (e) {}
+    }
+
+    async function loadPublicStores() {
+        const container = document.getElementById('storesShowcase');
+        const badge = document.getElementById('storeCountBadge');
+        try {
+            const res = await fetch('/api/public/stores');
+            const d = await res.json();
+            const stores = d.stores || [];
+            badge.textContent = `${stores.length}টি অ্যাক্টিভ শপ`;
+
+            if (stores.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:26px; color:#64748b; font-size:13px;">এখনো কোনো শপ তৈরি হয়নি। উপরের ফর্ম থেকে আপনার প্রথম শপটি তৈরি করুন!</div>`;
+                return;
+            }
+
+            container.innerHTML = stores.map(s => {
+                const dom = s.base_domain || 'sojib.de5.net';
+                const sub = s.subdomain || '';
+                const url = `https://${dom}/${sub}`;
+                return `
+                <div class="store-tile">
+                    <div>
+                        <div class="store-title">${escapeHtml(s.bot_name)}</div>
+                        <div class="store-url">${escapeHtml(dom)}/${escapeHtml(sub)}</div>
+                        <div class="store-meta" style="margin-top:6px;">📦 ${Number(s.product_count || 0)}টি পণ্য</div>
+                    </div>
+                    <a href="${escapeHtml(url)}" target="_blank" class="btn-visit">
+                        <i class="ti ti-external-link"></i> শপ ভিজিট করুন
+                    </a>
+                </div>`;
+            }).join('');
+        } catch (e) {
+            badge.textContent = 'অফলাইন';
+        }
+    }
+
+    async function analyzeSitePreview() {
+        const url = document.getElementById('analyzerUrl').value.trim();
+        if (!url) return alert('ওয়েবসাইট লিংক দিন!');
+        const btn = document.getElementById('btnAnalyze');
+        const box = document.getElementById('analyzerResult');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="ti ti-loader"></i> অ্যানালাইজ হচ্ছে...';
+
+        try {
+            const res = await fetch('/api/public/analyze-site', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ website_url: url })
+            });
+            const d = await res.json();
+            box.style.display = 'block';
+            if (d.success && d.knowledge) {
+                box.className = 'feedback-box feedback-success';
+                box.innerHTML = `
+                    <b>✅ ওয়েবসাইট অ্যানালাইসিস সম্পন্ন:</b><br>
+                    <b>ধরন:</b> ${escapeHtml(d.knowledge.businessType)}<br>
+                    <b>টাইটেল:</b> ${escapeHtml(d.knowledge.title)}<br>
+                    <b>সারসংক্ষেপ:</b> ${escapeHtml(d.knowledge.description)}<br>
+                    <b>শনাক্তকৃত আইটেম:</b> ${(d.knowledge.products || []).length}টি
+                `;
+            } else {
+                box.className = 'feedback-box feedback-error';
+                box.textContent = d.message || 'অ্যানালাইজ করা যায়নি!';
+            }
+        } catch (e) {
+            box.style.display = 'block';
+            box.className = 'feedback-box feedback-error';
+            box.textContent = 'সার্ভার কানেকশন সমস্যা!';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="ti ti-sparkles"></i> ওয়েবসাইট অ্যানালাইজ করুন';
+        }
+    }
+
+    async function handleLaunch(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        const box = document.getElementById('resultBox');
+        btn.innerHTML = '<i class="ti ti-loader"></i> তৈরি হচ্ছে... অপেক্ষা করুন';
+        btn.disabled = true;
+
+        const payload = {
+            bot_type: document.getElementById('botType').value,
+            bot_name: document.getElementById('bizName').value.trim(),
+            website_url: document.getElementById('siteUrl').value.trim(),
+            catalog_url: document.getElementById('catalogUrl').value.trim(),
+            custom_info: document.getElementById('manualDetails').value.trim(),
+            subdomain: document.getElementById('subdomain').value.trim(),
+            base_domain: document.getElementById('baseDomain').value
+        };
+
+        try {
+            const res = await fetch('/api/launch-bot-dashboard', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            box.style.display = 'block';
+
+            if (result.success) {
+                box.className = 'feedback-box feedback-success';
+                box.innerHTML = `
+                    <b>🎉 আপনার শপ ও AI ড্যাশবোর্ড সফলভাবে তৈরি হয়েছে!</b><br>
+                    🛍️ <b>কাস্টমার শপ লিংক:</b> <a href="${escapeHtml(result.shopUrl)}" target="_blank" style="color:#047857; font-weight:800;">${escapeHtml(result.shopUrl)}</a><br>
+                    🎛️ <b>ওনার ড্যাশবোর্ড:</b> <a href="${escapeHtml(result.dashboardUrl)}" target="_blank" style="color:#0284c7; font-weight:800;">${escapeHtml(result.dashboardUrl)}</a>
+                `;
+                loadPublicStores();
+            } else {
+                box.className = 'feedback-box feedback-error';
+                box.textContent = result.message || 'ত্রুটি ঘটেছে!';
+            }
+        } catch (err) {
+            box.style.display = 'block';
+            box.className = 'feedback-box feedback-error';
+            box.textContent = 'সার্ভার কানেকশন সমস্যা হয়েছে!';
+        } finally {
+            btn.innerHTML = '<i class="ti ti-rocket"></i> CREATE MY SHOP & AI DASHBOARD';
+            btn.disabled = false;
+        }
+    }
+
+    loadActiveDomains();
+    loadPublicStores();
+    updateUrlPreview();
+</script>
+</body>
+</html>
