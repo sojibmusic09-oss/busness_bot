@@ -70,6 +70,70 @@ function safeCompare(a, b) {
   return crypto.timingSafeEqual(bufA, bufB);
 }
 
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(String(password), salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, stored) {
+  try {
+    const [salt, key] = String(stored || '').split(':');
+    if (!salt || !key) return false;
+    const keyBuf = Buffer.from(key, 'hex');
+    const derived = crypto.scryptSync(String(password), salt, 64);
+    if (keyBuf.length !== derived.length) return false;
+    return crypto.timingSafeEqual(keyBuf, derived);
+  } catch (e) {
+    return false;
+  }
+}
+
+function getAuthSecret() {
+  return process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'freesite_sojib_secret_key_2026';
+}
+
+function signUserToken(payload) {
+  const data = Buffer.from(JSON.stringify({ ...payload, exp: Date.now() + 7 * 86400 * 1000 })).toString('base64url');
+  const sig = crypto.createHmac('sha256', getAuthSecret()).update(data).digest('base64url');
+  return `${data}.${sig}`;
+}
+
+function verifyUserToken(token) {
+  try {
+    const [data, sig] = String(token || '').split('.');
+    if (!data || !sig) return null;
+    const expected = crypto.createHmac('sha256', getAuthSecret()).update(data).digest('base64url');
+    if (!safeCompare(sig, expected)) return null;
+    const parsed = JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
+    if (!parsed.exp || parsed.exp < Date.now()) return null;
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+}
+
+function getLoggedInUser(req) {
+  const raw = req.headers.cookie || '';
+  const match = raw.match(/freesite_user_auth=([^;]+)/);
+  if (!match) return null;
+  return verifyUserToken(decodeURIComponent(match[1]));
+}
+
+function setUserAuthCookie(req, res, payload) {
+  const token = signUserToken(payload);
+  const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
+  const flags = [
+    `freesite_user_auth=${encodeURIComponent(token)}`,
+    'Path=/',
+    'Max-Age=604800',
+    'HttpOnly',
+    'SameSite=Lax'
+  ];
+  if (isHttps) flags.push('Secure');
+  res.setHeader('Set-Cookie', flags.join('; '));
+}
+
 // Security Headers Middleware
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -302,7 +366,7 @@ app.use(async (req, res, next) => {
           <!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
           <title>শপ পাওয়া যায়নি</title>
           <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&family=Hind+Siliguri:wght@600;700&display=swap" rel="stylesheet">
-          <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#f1f5f9;background-image:radial-gradient(at 0% 0%,rgba(16,185,129,.1) 0,transparent 50%);font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif;color:#0f172a}.box{max-width:440px;width:100%;background:rgba(255,255,255,.78);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.9);border-radius:22px;padding:34px 26px;text-align:center;box-shadow:0 15px 35px rgba(15,23,42,.08)}.btn{display:inline-block;margin-top:18px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:700}</style>
+          <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#f1f5f9;background-image:radial-gradient(at 0% 0%,rgba(16,185,129,.1) 0,transparent 50%);font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif; font-weight:600; line-height:1.65;color:#0f172a}.box{max-width:440px;width:100%;background:rgba(255,255,255,.78);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.9);border-radius:22px;padding:34px 26px;text-align:center;box-shadow:0 15px 35px rgba(15,23,42,.08)}.btn{display:inline-block;margin-top:18px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:700}</style>
           </head><body><div class="box"><h2 style="font-size:22px;margin-bottom:8px;">⚠️ শপ বা ড্যাশবোর্ড পাওয়া যায়নি!</h2><p style="color:#64748b;font-size:14px;"><b>${escapeHtml(cleanSub)}</b> নামে কোনো স্টোর এখনো তৈরি করা হয়নি।</p><a href="/" class="btn">নতুন শপ তৈরি করুন 👉</a></div></body></html>
         `);
       }
@@ -346,7 +410,7 @@ function generateSingleProductPage(bot, p, domain, slug) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     :root { --primary: ${primaryColor}; }
-    * { box-sizing:border-box; margin:0; padding:0; font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif; font-weight:600; line-height:1.65; }
     body {
       background-color:#f1f5f9;
       background-image:
@@ -448,7 +512,7 @@ function generateStorefrontView(bot, products, fullUrl, slug = '', domain = '') 
       --glass-border: rgba(255, 255, 255, 0.85);
       --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
     }
-    * { box-sizing:border-box; margin:0; padding:0; font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif; font-weight:600; line-height:1.65; }
     body {
       background-color: #f1f5f9;
       background-image:
@@ -639,7 +703,7 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
       --glass-border: rgba(255, 255, 255, 0.85);
       --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
     }
-    * { box-sizing:border-box; margin:0; padding:0; font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif; font-weight:600; line-height:1.65; }
     body {
       background-color: #f1f5f9;
       background-image:
@@ -972,8 +1036,10 @@ function generateUserBrandedDashboard(bot, activeDomain, slug, payConfig = {}) {
     </div>
   </div>
 
-  <div style="text-align:center; padding:16px; font-size:12px; color:var(--muted);">
-    Platform by <b>Sojib</b> • WhatsApp: <a href="https://wa.me/8801409084819" target="_blank" style="color:#059669; font-weight:700;">01409084819</a>
+  <div style="text-align:center; padding:18px; font-size:13px; font-weight:700; color:var(--muted); display:flex; flex-wrap:wrap; justify-content:center; gap:10px; align-items:center;">
+    <span>Platform by <b>Sojib</b></span>
+    <a href="https://wa.me/8801404277094" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:5px 12px;border-radius:999px;text-decoration:none;font-size:12px;font-weight:800;"><i class="ti ti-crown" style="color:#fde047;"></i> <i class="ti ti-brand-whatsapp"></i> 01404277094</a>
+    <a href="https://tiktok.com/@sojib_music" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#0f172a;color:#fff;padding:5px 12px;border-radius:999px;text-decoration:none;font-size:12px;font-weight:800;"><i class="ti ti-brand-tiktok"></i> @sojib_music</a>
   </div>
 </div>
 
@@ -1850,9 +1916,87 @@ app.get('/catalog/:slug', async (req, res) => {
   }
 });
 
-// ১. বট ও স্টোর তৈরি (বর্তমান হোস্ট বা অ্যাডমিন-যুক্ত ডোমেইনে /myshop)
+// ================= USER ACCOUNT REGISTER & LOGIN ROUTES =================
+app.post('/api/auth/register', adminLoginLimiter, async (req, res) => {
+  try {
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
+
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ success: false, message: 'সঠিক নাম ও ইমেইল দিন।' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' });
+    }
+
+    const exists = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1', [email]);
+    if (exists.rows.length > 0) {
+      return res.status(400).json({ success: false, message: 'এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা আছে! লগইন করুন।' });
+    }
+
+    const pwHash = hashPassword(password);
+    const created = await pool.query(
+      `INSERT INTO users (name, email, password_hash, role, plan) VALUES ($1, $2, $3, 'user', 'free') RETURNING id, name, email, role, plan`,
+      [name, email, pwHash]
+    );
+
+    const user = created.rows[0];
+    setUserAuthCookie(req, res, { id: user.id, name: user.name, email: user.email });
+    res.json({ success: true, message: '🎉 অ্যাকাউন্ট রেজিস্ট্রেশন সফল হয়েছে!', user });
+  } catch (e) {
+    res.status(500).json({ success: false, message: 'রেজিস্ট্রেশন ব্যর্থ হয়েছে!' });
+  }
+});
+
+app.post('/api/auth/login', adminLoginLimiter, async (req, res) => {
+  try {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
+
+    const found = await pool.query('SELECT id, name, email, password_hash, role, plan FROM users WHERE LOWER(email) = $1', [email]);
+    if (found.rows.length === 0 || !verifyPassword(password, found.rows[0].password_hash)) {
+      return res.status(401).json({ success: false, message: '❌ ভুল ইমেইল অথবা পাসওয়ার্ড!' });
+    }
+
+    const u = found.rows[0];
+    const user = { id: u.id, name: u.name || u.email.split('@')[0], email: u.email, role: u.role, plan: u.plan };
+    setUserAuthCookie(req, res, { id: user.id, name: user.name, email: user.email });
+    res.json({ success: true, message: '✅ লগইন সফল হয়েছে!', user });
+  } catch (e) {
+    res.status(500).json({ success: false, message: 'লগইন সমস্যা হয়েছে!' });
+  }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  res.setHeader('Set-Cookie', 'freesite_user_auth=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');
+  res.json({ success: true, message: 'লগআউট সম্পন্ন।' });
+});
+
+app.get('/api/auth/me', async (req, res) => {
+  const authUser = getLoggedInUser(req);
+  if (!authUser) return res.json({ success: false, user: null, myStores: [] });
+  try {
+    const currentHost = (req.headers['x-forwarded-host'] || req.headers.host || 'techxzonee.shop')
+      .split(',')[0].toLowerCase().split(':')[0].trim().replace(/^www\./, '');
+    const myStores = await pool.query(
+      `SELECT id, bot_name, subdomain, COALESCE(NULLIF(base_domain, ''), $2) AS base_domain, status, plan, created_at
+       FROM whatsapp_bots WHERE user_id = $1 ORDER BY id DESC`,
+      [authUser.id, currentHost]
+    );
+    res.json({ success: true, user: authUser, myStores: myStores.rows });
+  } catch (e) {
+    res.json({ success: true, user: authUser, myStores: [] });
+  }
+});
+
+// ১. বট ও স্টোর তৈরি (লগইনকৃত অ্যাকাউন্টের সাথে যুক্ত)
 app.post('/api/launch-bot-dashboard', async (req, res) => {
   try {
+    const authUser = getLoggedInUser(req);
+    if (!authUser) {
+      return res.status(401).json({ success: false, message: '🔒 শপ তৈরি করতে প্রথমে অ্যাকাউন্ট লগইন বা রেজিস্টার করুন!' });
+    }
     const { bot_type, bot_name, website_url, catalog_url, custom_info, subdomain, base_domain } = req.body;
     const cleanSub = String(subdomain || '').toLowerCase().trim().replace(/[^a-z0-9-]/g, '');
 
@@ -1905,9 +2049,9 @@ app.post('/api/launch-bot-dashboard', async (req, res) => {
     }
 
     const botInsert = await pool.query(
-      `INSERT INTO whatsapp_bots (bot_name, website_url, system_prompt, bot_type, subdomain, base_domain, status, rate_limit_daily, plan)
-       VALUES ($1, $2, $3, $4, $5, $6, 'DISCONNECTED', 300, 'free') RETURNING id`,
-      [bot_name || 'My Shop', website_url || catalog_url || '', finalPrompt, bot_type || 'catalog_link', cleanSub, finalDomain]
+      `INSERT INTO whatsapp_bots (user_id, bot_name, website_url, system_prompt, bot_type, subdomain, base_domain, status, rate_limit_daily, plan)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'DISCONNECTED', 300, 'free') RETURNING id`,
+      [authUser.id, bot_name || 'My Shop', website_url || catalog_url || '', finalPrompt, bot_type || 'catalog_link', cleanSub, finalDomain]
     );
     const botId = botInsert.rows[0].id;
 
@@ -2730,6 +2874,7 @@ app.listen(PORT, '0.0.0.0', async () => {
     `);
 
     await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS name VARCHAR(150);
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS rate_limit_daily INT DEFAULT 300;
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS plan VARCHAR(30) DEFAULT 'free';
       ALTER TABLE whatsapp_bots ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP;
