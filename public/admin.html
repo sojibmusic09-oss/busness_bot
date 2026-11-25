@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Control Center — FreeSite by Sojib</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-deep: #065f46;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-subtle: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.85);
+            --glass-shadow: 0 10px 32px rgba(31, 38, 135, 0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text);
+            padding: 18px 14px;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .container { max-width: 1120px; margin: 0 auto; }
+
+        /* Dark Slate + Emerald Super Admin Command Header */
+        .command-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(6, 78, 59, 0.92) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 22px;
+            padding: 20px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            color: #f8fafc;
+            box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.25);
+        }
+        .header-title { font-size: 20px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 10px; }
+        .header-sub { font-size: 12px; color: #cbd5e1; margin-top: 4px; }
+        .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .pill-live {
+            font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 999px;
+            background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.45);
+        }
+        .btn-logout {
+            padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(248, 113, 113, 0.4);
+            background: rgba(239, 68, 68, 0.18); color: #fecaca; font-size: 12px; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: .2s;
+        }
+        .btn-logout:hover { background: rgba(239, 68, 68, 0.35); color: #fff; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+        @media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stat-tile {
+            background: var(--glass-subtle); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px 16px;
+            box-shadow: var(--glass-shadow); transition: .2s;
+        }
+        .stat-tile:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.85); }
+        .stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 700; }
+        .stat-val { font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 6px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); color: #475569; padding: 10px 16px;
+            border-radius: 999px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 6px; transition: .2s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(5, 150, 105, 0.28);
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px;
+            margin-bottom: 20px; box-shadow: var(--glass-shadow); transition: .2s;
+        }
+        .card h3 { font-size: 16px; font-weight: 800; color: var(--primary-deep); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+        /* Feedback Toast Banner */
+        .toast-banner {
+            display: none; padding: 13px 18px; border-radius: 14px; margin-bottom: 18px; font-size: 13px; font-weight: 700;
+            backdrop-filter: blur(12px); align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .toast-success { background: rgba(220, 252, 231, 0.92); color: #15803d; border: 1px solid #86efac; }
+        .toast-error { background: rgba(254, 226, 226, 0.92); color: #b91c1c; border: 1px solid #fca5a5; }
+
+        /* Inputs & Buttons */
+        input, select {
+            width: 100%; padding: 11px 14px; background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9); border-radius: 12px; font-size: 13px; color: var(--text); outline: none; transition: .2s;
+        }
+        input:focus, select:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); }
+
+        .btn-primary {
+            padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.25); cursor: pointer;
+            font-weight: 700; font-size: 13px; color: #fff;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.26); display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: .2s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(5, 150, 105, 0.35); }
+        .btn-action {
+            padding: 7px 12px; border-radius: 9px; border: none; cursor: pointer; font-weight: 700; font-size: 12px;
+            display: inline-flex; align-items: center; gap: 4px; transition: .2s; white-space: nowrap;
+        }
+        .btn-approve { background: #059669; color: #fff; }
+        .btn-approve:hover { background: #047857; }
+        .btn-blue { background: #0284c7; color: #fff; }
+        .btn-amber { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .btn-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .btn-slate { background: rgba(241, 245, 249, 0.95); color: #334155; border: 1px solid #cbd5e1; }
+
+        /* Responsive Tables */
+        .table-wrap { width: 100%; overflow-x: auto; border-radius: 14px; border: 1px solid rgba(226, 232, 240, 0.85); background: rgba(255, 255, 255, 0.6); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid rgba(226, 232, 240, 0.75); text-align: left; vertical-align: middle; }
+        th { background: rgba(248, 250, 252, 0.85); color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+        tr:last-child td { border-bottom: none; }
+
+        .pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+        .pill-green { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .pill-red { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .pill-amber { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .pill-slate { background: #e2e8f0; color: #475569; }
+
+        .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 14px; }
+        @media (min-width: 640px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+        .dns-guide {
+            background: rgba(240, 253, 244, 0.85); border: 2px dashed #059669; border-radius: 16px;
+            padding: 14px 16px; margin-bottom: 16px; font-size: 12.5px; color: #065f46; line-height: 1.65;
+        }
+        code { background: rgba(15, 23, 42, 0.08); padding: 2px 7px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #0f172a; }
+
+        /* Glass Modal */
+        .modal-backdrop {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-card {
+            max-width: 440px; width: 100%; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px);
+            border: 1px solid #fff; border-radius: 22px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+        }
+        .modal-title { font-size: 17px; font-weight: 800; color: #065f46; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .modal-field { margin-bottom: 12px; }
+        .modal-field label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 5px; }
+
+        .footer { text-align: center; padding: 20px 0; font-size: 12px; color: var(--muted); margin-top: 10px; }
+        .footer a { color: #059669; text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Dark Slate + Emerald Command Header -->
+    <div class="command-header">
+        <div>
+            <div class="header-title">
+                <i class="ti ti-shield-lock" style="font-size:26px; color:#34d399;"></i> Super Admin Command Console
+            </div>
+            <div class="header-sub">
+                Architect: <b>Sojib</b> • WhatsApp: <a href="https://wa.me/8801409084819" target="_blank" style="color:#6ee7b7; font-weight:700; text-decoration:none;">01409084819</a>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span class="pill-live">● Master Node Live</span>
+            <button onclick="adminLogout()" class="btn-logout"><i class="ti ti-logout"></i> লগআউট</button>
+        </div>
+    </div>
+
+    <!-- Feedback Toast Banner -->
+    <div id="toastBanner" class="toast-banner">
+        <span id="toastText"></span>
+        <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;cursor:pointer;font-weight:800;color:inherit;">✕</button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-tile">
+            <div class="stat-lbl">মোট স্টোর ও বট</div>
+            <div class="stat-val" id="statTotalBots">0</div>
+        </div>
+        <div class="stat-tile">
+            <div class="stat-lbl">অ্যাক্টিভ ডোমেইন</div>
+            <div class="stat-val" id="statActiveDomains" style="color:#0284c7;">0</div>
+        </div>
+        <div class="stat-tile">
+            <div class="stat-lbl">অনলাইন বট</div>
+            <div class="stat-val" id="statConnectedBots" style="color:#15803d;">0</div>
+        </div>
+        <div class="stat-tile">
+            <div class="stat-lbl">পেন্ডিং পেমেন্ট</div>
+            <div class="stat-val" id="statPendingPay" style="color:#d97706;">0</div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-domains', this)"><i class="ti ti-world-www"></i> ডোমেইন ম্যানেজার (/myshop)</button>
+        <button class="tab-btn" onclick="switchTab('tab-traffic', this)"><i class="ti ti-activity"></i> বট তালিকা ও প্রেশার গার্ড</button>
+        <button class="tab-btn" onclick="switchTab('tab-payments', this)"><i class="ti ti-receipt-2"></i> পেমেন্ট ভেরিফিকেশন</button>
+        <button class="tab-btn" onclick="switchTab('tab-api', this)"><i class="ti ti-cloud-network"></i> Cloud API & Apps</button>
+        <button class="tab-btn" onclick="switchTab('tab-servers', this)"><i class="ti ti-server-2"></i> সার্ভার ও স্মার্ট রিসেট</button>
+    </div>
+
+    <!-- TAB 1: কাস্টম ডোমেইন ম্যানেজার (NEW FEATURE) -->
+    <div id="tab-domains" class="tab-content">
+        <div class="card">
+            <h3><i class="ti ti-world-plus"></i> নতুন কাস্টম ডোমেইন যুক্ত করুন (Main Admin Domain Manager)</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+                এখানে যেকোনো ডোমেইন অ্যাড করলে ইউজাররা ওই ডোমেইন সিলেক্ট করে শপ বানাতে পারবে এবং সরাসরি <code>https://your-domain.com/myshop</code> লিংকে শপ ওপেন হবে!
+            </p>
+
+            <div class="dns-guide">
+                <b>🌐 ডোমেইন কানেক্ট করার নিয়ম (DNS Setup):</b><br>
+                ১. আপনার ডোমেইন প্রোভাইডারের DNS প্যানেলে গিয়ে Render/সার্ভার IP-তে <b>A Record</b> অথবা Render হোস্টে <b>CNAME</b> পয়েন্ট করুন।<br>
+                ২. এরপর নিচের বক্সে ডোমেইনটি (যেমন: <code>shopbd.xyz</code>) লিখে <b>Add Domain</b> বাটনে ক্লিক করুন।<br>
+                ৩. প্রতিটি স্টোর সরাসরি <code>https://shopbd.xyz/myshop</code> এবং ড্যাশবোর্ড <code>https://shopbd.xyz/dash/myshop</code>-এ চলবে।
+            </div>
+
+            <div class="form-row">
+                <input type="text" id="newDomainInput" placeholder="ডোমেইন লিখুন (যেমন: mybrand.com)" style="flex:2; min-width:210px;">
+                <input type="text" id="newDomainNotes" placeholder="নোট (যেমন: Primary E-Commerce Domain)" style="flex:2; min-width:190px;">
+                <button onclick="addCustomDomain()" class="btn-primary" style="flex:1; min-width:150px;">
+                    <i class="ti ti-plus"></i> ডোমেইন অ্যাড করুন
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ডোমেইন নাম</th>
+                            <th>উদাহরণ শপ URL</th>
+                            <th>নোট</th>
+                            <th>স্ট্যাটাস</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="domainRows">
+                        <tr><td colspan="6" style="text-align:center;">ডোমেইন লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: বটের তালিকা ও প্রেশার গার্ড -->
+    <div id="tab-traffic" class="tab-content" style="display:none;">
+        <div class="card">
+            <h3><i class="ti ti-activity"></i> বটের ট্রাফিক ও প্রেশার গার্ড</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+                সকল স্টোর ও WhatsApp বটের লাইভ রিকোয়েস্ট ট্র্যাক করুন, লিমিট সেট করুন অথবা ডেডিকেটেড API Key অ্যাসাইন করুন:
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>বট / শপ নাম</th>
+                            <th>শপ লিংক (/slug)</th>
+                            <th>সার্ভার</th>
+                            <th>আজকের মেসেজ</th>
+                            <th>প্ল্যান ও মেয়াদ</th>
+                            <th>লিমিট</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="botRows">
+                        <tr><td colspan="8" style="text-align:center;">ডাটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: পেমেন্ট ভেরিফিকেশন ও নম্বর পরিবর্তন -->
+    <div id="tab-payments" class="tab-content" style="display:none;">
+        <div class="card">
+            <h3><i class="ti ti-receipt-2"></i> পেন্ডিং পেমেন্ট ভেরিফিকেশন (bKash / Nagad / Rocket)</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+                টাকা যাচাই করে "Approve" দিলেই ইউজারের অ্যাকাউন্ট প্রিমিয়াম হবে:
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>বট নাম</th>
+                            <th>মেথড ও পরিমাণ</th>
+                            <th>সেন্ডার নম্বর</th>
+                            <th>TrxID</th>
+                            <th>স্ট্যাটাস</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentRows">
+                        <tr><td colspan="7" style="text-align:center;">ডাটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="ti ti-settings"></i> পেমেন্ট নম্বর কনফিগারেশন</h3>
+            <div class="grid-3">
+                <div>
+                    <label style="display:block; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:5px;">bKash নম্বর:</label>
+                    <input type="text" id="adminBkash" value="01409084819">
+                </div>
+                <div>
+                    <label style="display:block; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:5px;">Nagad নম্বর:</label>
+                    <input type="text" id="adminNagad" value="01409084819">
+                </div>
+                <div>
+                    <label style="display:block; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:5px;">Rocket নম্বর:</label>
+                    <input type="text" id="adminRocket" value="01409084819">
+                </div>
+            </div>
+            <button onclick="savePaymentNumbers()" class="btn-primary"><i class="ti ti-device-floppy"></i> নম্বর সেভ করুন</button>
+        </div>
+    </div>
+
+    <!-- TAB 4: CLOUD PRODUCT API & MOBILE APPS -->
+    <div id="tab-api" class="tab-content" style="display:none;">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                <h3 style="margin:0;"><i class="ti ti-cloud-network"></i> Universal Product Cloud API (v1)</h3>
+                <a href="/api/v1/docs" target="_blank" class="pill pill-green" style="text-decoration:none;">
+                    📖 Open Interactive Docs
+                </a>
+            </div>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+                মোবাইল অ্যাপ (Android/iOS), আলাদা অ্যাডমিন অ্যাপ বা ই-কমার্স ERP কানেক্ট করতে API Key তৈরি করুন:
+            </p>
+
+            <div class="form-row">
+                <input type="text" id="newAppName" placeholder="অ্যাপ্লিকেশন নাম (যেমন: Android Store App)" style="flex:1; min-width:220px;">
+                <button onclick="createNewAppCredentials()" class="btn-primary"><i class="ti ti-key"></i> Generate Keys</button>
+            </div>
+
+            <div id="newKeyBox" style="display:none; background:rgba(236,253,245,0.95); border:2px dashed #059669; padding:16px; border-radius:14px; margin-bottom:16px; font-size:13px; line-height:1.7;"></div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>App Name</th>
+                            <th>App ID</th>
+                            <th>রিকোয়েস্ট সংখ্যা</th>
+                            <th>স্ট্যাটাস</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appRows">
+                        <tr><td colspan="5" style="text-align:center;">ডাটা লোড হচ্ছে...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: সার্ভার ক্যাপাসিটি ও স্মার্ট রিসেট -->
+    <div id="tab-servers" class="tab-content" style="display:none;">
+        <div class="card">
+            <h3><i class="ti ti-server-2"></i> সার্ভার ক্র্যাশ গার্ড (ডায়নামিক বট লিমিট)</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+                প্রতিটি সার্ভারে সর্বোচ্চ কতটি করে বট চলবে তা নির্ধারণ করুন:
+            </p>
+            <div class="form-row" style="max-width:440px;">
+                <input type="number" id="serverMaxBots" style="flex:1;" placeholder="যেমন: 4">
+                <button class="btn-primary" onclick="saveMaxBotsLimit()"><i class="ti ti-check"></i> ক্যাপাসিটি সেট</button>
+            </div>
+            <button class="btn-primary" style="width:100%; background:linear-gradient(135deg,#0284c7,#0369a1);" onclick="triggerRebalance()">
+                <i class="ti ti-arrows-shuffle"></i> Auto-Rebalance (সার্ভারগুলোতে সমানভাবে বট ভাগ করুন)
+            </button>
+        </div>
+
+        <div class="card" style="border-left: 4px solid #0284c7;">
+            <h3><i class="ti ti-refresh-alert" style="color:#0284c7;"></i> স্মার্ট সিস্টেম রিসেট (Zero Data Loss)</h3>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+                কোনো ডাটা বা WhatsApp সেশন নষ্ট না করে মেমরি ক্যাশ ও সকেট ফ্রেশ করুন।
+            </p>
+            <button onclick="triggerSmartReset()" class="btn-primary" style="width:100%; background:linear-gradient(135deg,#0284c7,#0369a1);">
+                <i class="ti ti-bolt"></i> Smart Reset (মেমরি ফ্রেশ ও সকেট রিস্টার্ট)
+            </button>
+        </div>
+    </div>
+
+    <div class="footer">
+        Platform Architect: <b>Sojib</b> • WhatsApp: <a href="https://wa.me/8801409084819" target="_blank">01409084819</a> • TikTok: <a href="https://tiktok.com/@sojib..music" target="_blank">@sojib..music</a>
+    </div>
+</div>
+
+<!-- Glass Modal: Approve Payment -->
+<div id="approveModal" class="modal-backdrop">
+    <div class="modal-card">
+        <div class="modal-title"><i class="ti ti-crown" style="color:#d97706;"></i> পেমেন্ট অ্যাপ্রুভ ও প্যাকেজ সেট</div>
+        <input type="hidden" id="mPayId">
+        <div class="modal-field"><label>বট / শপ:</label><input type="text" id="mPayBot" readonly></div>
+        <div class="modal-field"><label>প্যাকেজের নাম:</label><input type="text" id="mPkgName" value="১ মাসের প্রিমিয়াম"></div>
+        <div class="modal-field"><label>মেয়াদ (দিন):</label><input type="number" id="mPkgDays" value="30"></div>
+        <div class="modal-field"><label>ডেইলি রিকোয়েস্ট লিমিট:</label><input type="number" id="mPkgLimit" value="3000"></div>
+        <div class="modal-field"><label>পরিমাণ (৳ টাকা):</label><input type="number" id="mPkgAmount" value="300"></div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+            <button onclick="submitApproveModal()" class="btn-primary" style="flex:1;">✅ Approve করুন</button>
+            <button onclick="closeModal('approveModal')" class="btn-action btn-slate" style="padding:10px 16px;">বাতিল</button>
+        </div>
+    </div>
+</div>
+
+<!-- Glass Modal: Assign Keys -->
+<div id="keysModal" class="modal-backdrop">
+    <div class="modal-card">
+        <div class="modal-title"><i class="ti ti-key" style="color:#059669;"></i> ডেডিকেটেড API Key অ্যাসাইন</div>
+        <input type="hidden" id="mKeyBotId">
+        <div class="modal-field"><label>বট / শপ:</label><input type="text" id="mKeyBotName" readonly></div>
+        <div class="modal-field"><label>Gemini API Key(s) (কমা দিয়ে একাধিক দেওয়া যাবে):</label><input type="text" id="mGeminiKey" placeholder="AIzaSy... (খালি রাখলে আগেরটি থাকবে)"></div>
+        <div class="modal-field"><label>ImgBB API Key (অপশনাল):</label><input type="text" id="mImgbbKey" placeholder="খালি রাখলে ডিফল্ট থাকবে"></div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+            <button onclick="submitKeysModal()" class="btn-primary" style="flex:1;">💾 Key সেভ করুন</button>
+            <button onclick="closeModal('keysModal')" class="btn-action btn-slate" style="padding:10px 16px;">বাতিল</button>
+        </div>
+    </div>
+</div>
+
+<!-- Glass Modal: Set Limit -->
+<div id="limitModal" class="modal-backdrop">
+    <div class="modal-card">
+        <div class="modal-title"><i class="ti ti-gauge" style="color:#0284c7;"></i> ডেইলি প্রেশার লিমিট পরিবর্তন</div>
+        <input type="hidden" id="mLimitBotId">
+        <div class="modal-field"><label>নতুন ডেইলি লিমিট (req/day):</label><input type="number" id="mLimitVal" value="1000"></div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+            <button onclick="submitLimitModal()" class="btn-primary" style="flex:1;">সেভ করুন</button>
+            <button onclick="closeModal('limitModal')" class="btn-action btn-slate" style="padding:10px 16px;">বাতিল</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function showToast(msg, isSuccess = true) {
+        const box = document.getElementById('toastBanner');
+        box.className = 'toast-banner ' + (isSuccess ? 'toast-success' : 'toast-error');
+        document.getElementById('toastText').textContent = msg;
+        box.style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function apiFetch(url, options = {}) {
+        const res = await fetch(url, options);
+        if (res.status === 401) {
+            window.location.reload();
+            throw new Error('Unauthorized');
+        }
+        return res.json();
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).style.display = 'block';
+        if (btn) btn.classList.add('active');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    async function loadAdminData() {
+        try {
+            const data = await apiFetch('/api/admin/overview');
+            if (!data.success) return;
+
+            const bots = data.bots || [];
+            const domains = data.domains || [];
+            const payments = data.payments || [];
+
+            // Stats Update
+            document.getElementById('statTotalBots').textContent = bots.length;
+            document.getElementById('statActiveDomains').textContent = domains.filter(d => d.is_active).length;
+            document.getElementById('statConnectedBots').textContent = bots.filter(b => b.status === 'CONNECTED').length;
+            document.getElementById('statPendingPay').textContent = payments.filter(p => p.status === 'PENDING').length;
+
+            // Settings
+            (data.settings || []).forEach(s => {
+                if (s.key === 'max_bots_per_server') document.getElementById('serverMaxBots').value = s.value;
+                if (s.key === 'bkash_no') document.getElementById('adminBkash').value = s.value;
+                if (s.key === 'nagad_no') document.getElementById('adminNagad').value = s.value;
+                if (s.key === 'rocket_no') document.getElementById('adminRocket').value = s.value;
+            });
+
+            // Domains Table
+            document.getElementById('domainRows').innerHTML = domains.map(d => `
+                <tr>
+                    <td>#${Number(d.id)}</td>
+                    <td><b>${escapeHtml(d.domain_name)}</b></td>
+                    <td><code>https://${escapeHtml(d.domain_name)}/myshop</code></td>
+                    <td>${escapeHtml(d.notes || '—')}</td>
+                    <td>
+                        <span class="pill ${d.is_active ? 'pill-green' : 'pill-red'}">
+                            ● ${d.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-action btn-amber" onclick="toggleDomain(${Number(d.id)})">
+                                ${d.is_active ? 'Disable' : 'Enable'}
+                            </button>
+                            <button class="btn-action btn-danger" onclick="deleteDomain(${Number(d.id)}, '${escapeHtml(d.domain_name)}')">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center; color:#64748b;">কোনো ডোমেইন অ্যাড করা হয়নি।</td></tr>';
+
+            // Payments Table
+            document.getElementById('paymentRows').innerHTML = payments.map(p => `
+                <tr>
+                    <td>#${Number(p.id)}</td>
+                    <td><b>${escapeHtml(p.bot_name || 'N/A')}</b></td>
+                    <td>${escapeHtml(p.payment_method)} (৳${Number(p.amount || 300)})</td>
+                    <td>${escapeHtml(p.sender_number)}</td>
+                    <td><code>${escapeHtml(p.trx_id)}</code></td>
+                    <td><span class="pill ${p.status === 'APPROVED' ? 'pill-green' : 'pill-amber'}">● ${escapeHtml(p.status)}</span></td>
+                    <td>
+                        ${p.status === 'PENDING'
+                            ? `<button class="btn-action btn-approve" onclick="openApproveModal(${Number(p.id)}, '${escapeHtml(p.bot_name || 'Bot')}')">⚙️ Approve</button>`
+                            : `<span style="color:#059669; font-weight:700;">✅ অনুমোদিত (${Number(p.approved_days || 30)} দিন)</span>`
+                        }
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center; color:#64748b;">কোনো পেমেন্ট পেন্ডিং নেই</td></tr>';
+
+            // Bots Table
+            document.getElementById('botRows').innerHTML = bots.map(b => {
+                const expDate = b.expires_at ? new Date(b.expires_at).toLocaleDateString('bn-BD') : 'আনলিমিটেড';
+                const dom = b.base_domain || 'sojib.de5.net';
+                const sub = b.subdomain || '';
+                const shopLink = sub ? `https://${dom}/${sub}` : '#';
+                return `
+                <tr>
+                    <td>#${Number(b.id)}</td>
+                    <td><b>${escapeHtml(b.bot_name)}</b><br><small style="color:#059669;">${escapeHtml(b.package_name || 'Free Trial')}</small></td>
+                    <td>${sub ? `<a href="${escapeHtml(shopLink)}" target="_blank" style="color:#059669; font-weight:700; text-decoration:none;">${escapeHtml(dom)}/${escapeHtml(sub)}</a>` : '—'}</td>
+                    <td>Server #${Number(b.server_id || 1)}</td>
+                    <td><b>${Number(b.requests_today || 0)}</b></td>
+                    <td>
+                        <span class="pill ${b.plan === 'premium' ? 'pill-amber' : 'pill-slate'}">${escapeHtml((b.plan || 'free').toUpperCase())}</span>
+                        <br><small style="color:#64748b;">মেয়াদ: ${escapeHtml(expDate)}</small>
+                    </td>
+                    <td>${Number(b.rate_limit_daily || 300)} req/day</td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-action btn-slate" onclick="openLimitModal(${Number(b.id)}, ${Number(b.rate_limit_daily || 300)})">Limit</button>
+                            <button class="btn-action btn-approve" onclick="openKeysModal(${Number(b.id)}, '${escapeHtml(b.bot_name)}')">🔑 Key</button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('') || '<tr><td colspan="8" style="text-align:center; color:#64748b;">কোনো বট তৈরি হয়নি</td></tr>';
+        } catch (e) {}
+    }
+
+    async function addCustomDomain() {
+        const domain_name = document.getElementById('newDomainInput').value.trim();
+        const notes = document.getElementById('newDomainNotes').value.trim();
+        if (!domain_name) return showToast('ডোমেইন নাম লিখুন (যেমন: myshop.com)!', false);
+
+        try {
+            const d = await apiFetch('/api/admin/domains', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domain_name, notes })
+            });
+            showToast(d.message, d.success);
+            if (d.success) {
+                document.getElementById('newDomainInput').value = '';
+                document.getElementById('newDomainNotes').value = '';
+                loadAdminData();
+            }
+        } catch (e) { showToast('ডোমেইন অ্যাড ব্যর্থ হয়েছে!', false); }
+    }
+
+    async function toggleDomain(id) {
+        const d = await apiFetch('/api/admin/domains/toggle', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id })
+        });
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    async function deleteDomain(id, name) {
+        if (!confirm(`আপনি কি "${name}" ডোমেইনটি মুছে ফেলতে চান?`)) return;
+        const d = await apiFetch('/api/admin/domains/delete', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id })
+        });
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    async function loadApiApps() {
+        try {
+            const d = await apiFetch('/api/admin/applications');
+            if (d.success && d.connected_applications) {
+                document.getElementById('appRows').innerHTML = d.connected_applications.map(a => `
+                    <tr>
+                        <td><b>${escapeHtml(a.app_name)}</b></td>
+                        <td><code>${escapeHtml(a.app_id)}</code></td>
+                        <td>${Number(a.request_count || 0)}</td>
+                        <td><span class="pill ${a.status === 'active' ? 'pill-green' : 'pill-red'}">● ${escapeHtml(a.status)}</span></td>
+                        <td>
+                            ${a.status === 'active'
+                                ? `<button onclick="revokeApp('${escapeHtml(a.app_id)}')" class="btn-action btn-danger">Revoke</button>`
+                                : `<span style="color:#64748b; font-size:12px;">Revoked</span>`
+                            }
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" style="text-align:center; color:#64748b;">কোনো অ্যাপ কানেক্টেড নেই</td></tr>';
+            }
+        } catch (e) {}
+    }
+
+    async function createNewAppCredentials() {
+        const name = document.getElementById('newAppName').value.trim();
+        if (!name) return showToast('অ্যাপ্লিকেশন নাম লিখুন!', false);
+        const data = await apiFetch('/api/admin/create-application', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ app_name: name })
+        });
+        if (data.success) {
+            const box = document.getElementById('newKeyBox');
+            box.style.display = 'block';
+            box.innerHTML = `
+                <b style="color:#047857;">⚠️ নতুন ক্রেডেনশিয়ালস নিরাপদে সেভ করুন (এটি আর দেখানো হবে না):</b><br>
+                <b>App ID:</b> <code>${escapeHtml(data.credentials.app_id)}</code><br>
+                <b>X-API-KEY:</b> <code>${escapeHtml(data.credentials.api_key)}</code><br>
+                <b>X-SECRET-KEY:</b> <code>${escapeHtml(data.credentials.secret_key)}</code>
+            `;
+            document.getElementById('newAppName').value = '';
+            loadApiApps();
+        }
+    }
+
+    async function revokeApp(appId) {
+        if (!confirm('আপনি কি এই অ্যাপটির অ্যাক্সেস বন্ধ করতে চান?')) return;
+        await apiFetch('/api/admin/revoke-application', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ app_id: appId })
+        });
+        showToast('অ্যাপ অ্যাক্সেস বাতিল করা হয়েছে।', true);
+        loadApiApps();
+    }
+
+    // Modal handlers
+    function openApproveModal(id, botName) {
+        document.getElementById('mPayId').value = id;
+        document.getElementById('mPayBot').value = botName;
+        document.getElementById('approveModal').style.display = 'flex';
+    }
+
+    async function submitApproveModal() {
+        const d = await apiFetch('/api/admin/approve-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                paymentId: Number(document.getElementById('mPayId').value),
+                packageName: document.getElementById('mPkgName').value.trim(),
+                days: parseInt(document.getElementById('mPkgDays').value, 10),
+                dailyLimit: parseInt(document.getElementById('mPkgLimit').value, 10),
+                amount: parseFloat(document.getElementById('mPkgAmount').value)
+            })
+        });
+        closeModal('approveModal');
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    function openLimitModal(botId, curr) {
+        document.getElementById('mLimitBotId').value = botId;
+        document.getElementById('mLimitVal').value = curr;
+        document.getElementById('limitModal').style.display = 'flex';
+    }
+
+    async function submitLimitModal() {
+        const d = await apiFetch('/api/admin/update-bot-limit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                botId: Number(document.getElementById('mLimitBotId').value),
+                newLimit: parseInt(document.getElementById('mLimitVal').value, 10)
+            })
+        });
+        closeModal('limitModal');
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    function openKeysModal(botId, botName) {
+        document.getElementById('mKeyBotId').value = botId;
+        document.getElementById('mKeyBotName').value = botName;
+        document.getElementById('mGeminiKey').value = '';
+        document.getElementById('mImgbbKey').value = '';
+        document.getElementById('keysModal').style.display = 'flex';
+    }
+
+    async function submitKeysModal() {
+        const d = await apiFetch('/api/admin/assign-bot-keys', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                botId: Number(document.getElementById('mKeyBotId').value),
+                geminiKey: document.getElementById('mGeminiKey').value.trim(),
+                imgbbKey: document.getElementById('mImgbbKey').value.trim()
+            })
+        });
+        closeModal('keysModal');
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    async function savePaymentNumbers() {
+        const d = await apiFetch('/api/admin/update-payment-numbers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                bkash: document.getElementById('adminBkash').value.trim(),
+                nagad: document.getElementById('adminNagad').value.trim(),
+                rocket: document.getElementById('adminRocket').value.trim()
+            })
+        });
+        showToast(d.message, d.success);
+    }
+
+    async function saveMaxBotsLimit() {
+        const limit = document.getElementById('serverMaxBots').value;
+        if (!limit) return showToast('সংখ্যা দিন!', false);
+        const d = await apiFetch('/api/admin/set-max-bots-limit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ limit })
+        });
+        showToast(d.message, d.success);
+    }
+
+    async function triggerRebalance() {
+        if (!confirm('আপনি কি নির্ধারিত লিমিট অনুযায়ী বটগুলো সব সার্ভারে ভাগ করতে চান?')) return;
+        const d = await apiFetch('/api/admin/rebalance-servers', { method: 'POST' });
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    async function triggerSmartReset() {
+        if (!confirm('আপনি কি নিশ্চিত সার্ভারের মেমরি ও সকেট ফ্রেশ করতে চান?')) return;
+        const d = await apiFetch('/api/admin/smart-reset', { method: 'POST' });
+        showToast(d.message, d.success);
+        loadAdminData();
+    }
+
+    async function adminLogout() {
+        await fetch('/api/admin/logout', { method: 'POST' });
+        window.location.reload();
+    }
+
+    loadAdminData();
+    loadApiApps();
+</script>
+</body>
+</html>
