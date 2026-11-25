@@ -1,14 +1,14 @@
 /**
  * FreeSite SaaS — Hardened Background Worker Node
- * Runs assigned WhatsApp bots from PostgreSQL database with full AI & Order Alert support
+ * Runs assigned WhatsApp bots from Neon PostgreSQL database with full AI & Order Alert support
  * Architect: Sojib
  */
 
 require('dotenv').config();
 const express = require('express');
+const { Pool } = require('pg');
 const pino = require('pino');
 const { GoogleGenAI } = require('@google/genai');
-const { pool } = require('./database');
 const {
   searchSmartProducts,
   transcribeAudioWithGemini,
@@ -35,6 +35,38 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   next();
+});
+
+const FALLBACK_DB_URL =
+  'postgresql://neondb_owner:npg_FSBH1iGPo2za@ep-late-haze-bivsg8k8-pooler.c-5.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+
+function getSafeConnectionString() {
+  const rawUrl = (process.env.DATABASE_URL || FALLBACK_DB_URL).trim();
+  if (!rawUrl) return '';
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.searchParams.has('channel_binding')) {
+      parsed.searchParams.delete('channel_binding');
+    }
+    if (!parsed.searchParams.has('sslmode')) {
+      parsed.searchParams.set('sslmode', 'require');
+    }
+    return parsed.toString();
+  } catch (e) {
+    return rawUrl;
+  }
+}
+
+const pool = new Pool({
+  connectionString: getSafeConnectionString(),
+  ssl: { rejectUnauthorized: false },
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
+});
+
+pool.on('error', (err) => {
+  console.error(`[WORKER #${SERVER_ID} DB ERROR]:`, err.message);
 });
 
 const activeSockets = new Map();
