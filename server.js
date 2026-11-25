@@ -134,6 +134,96 @@ function setUserAuthCookie(req, res, payload) {
   res.setHeader('Set-Cookie', flags.join('; '));
 }
 
+function requireUserAuth(req, res, next) {
+  const user = getLoggedInUser(req);
+  if (!user) {
+    return res.status(401).json({ success: false, message: '🔒 অনুগ্রহ করে প্রথমে আপনার অ্যাকাউন্টে লগইন বা রেজিস্টার করুন।' });
+  }
+  req.authUser = user;
+  next();
+}
+
+async function isSuperAdminCookie(req) {
+  try {
+    const cookiePass = parseAdminCookie(req);
+    if (!cookiePass) return false;
+    const masterPassword = await getMasterAdminPassword();
+    return safeCompare(cookiePass.trim(), masterPassword);
+  } catch (e) {
+    return false;
+  }
+}
+
+async function requireBotOwner(req, res, next) {
+  try {
+    const user = getLoggedInUser(req);
+    const isAdmin = await isSuperAdminCookie(req);
+    if (!user && !isAdmin) {
+      return res.status(401).json({ success: false, message: '🔒 অনুগ্রহ করে প্রথমে লগইন করুন!' });
+    }
+    const botId = Number(req.body?.botId || req.query?.botId);
+    if (!botId) {
+      return res.status(400).json({ success: false, message: 'বট আইডি পাওয়া যায়নি।' });
+    }
+    const botRes = await pool.query('SELECT id, user_id FROM whatsapp_bots WHERE id = $1', [botId]);
+    if (botRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'বট পাওয়া যায়নি।' });
+    }
+    const bot = botRes.rows[0];
+    if (!isAdmin && (!bot.user_id || bot.user_id !== user.id)) {
+      return res.status(403).json({ success: false, message: '⛔ এই শপ/বটটি আপনার অ্যাকাউন্টের নয়!' });
+    }
+    req.authUser = user;
+    next();
+  } catch (e) {
+    res.status(500).json({ success: false, message: 'Auth check error' });
+  }
+}
+
+function generateLoginRequiredPage(titleText = 'লগইন প্রয়োজন') {
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>${escapeHtml(titleText)} — FreeSite AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Noto+Sans+Bengali:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif}
+    body{background:#f1f5f9;background-image:radial-gradient(at 0% 0%,rgba(16,185,129,.09) 0,transparent 50%),radial-gradient(at 100% 100%,rgba(14,165,233,.08) 0,transparent 50%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;color:#0f172a;font-weight:600;line-height:1.65}
+    .card{max-width:420px;width:100%;background:rgba(255,255,255,.82);backdrop-filter:blur(18px);border:1px solid #fff;border-radius:22px;padding:28px 24px;box-shadow:0 16px 40px rgba(15,23,42,.08);text-align:center}
+    h2{font-size:21px;font-weight:800;color:#065f46;margin-bottom:6px;padding-top:2px}
+    p{font-size:13.5px;color:#475569;margin-bottom:18px}
+    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #cbd5e1;margin-bottom:12px;font-size:14.5px;font-weight:600;outline:none}
+    input:focus{border-color:#059669;box-shadow:0 0 0 4px rgba(16,185,129,.15)}
+    button{width:100%;padding:13px;background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer}
+    .err{color:#b91c1c;font-size:13px;margin-top:10px;display:none;font-weight:700}
+    a{display:inline-block;margin-top:14px;color:#059669;font-size:13px;font-weight:800;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🔒 ${escapeHtml(titleText)}</h2>
+    <p>আপনার নিজস্ব ড্যাশবোর্ডে প্রবেশ করতে অনুগ্রহ করে অ্যাকাউন্টে লগইন করুন।</p>
+    <input type="email" id="lEmail" placeholder="ইমেইল ঠিকানা">
+    <input type="password" id="lPass" placeholder="পাসওয়ার্ড" onkeypress="if(event.key==='Enter') doGateLogin()">
+    <button onclick="doGateLogin()">লগইন করুন</button>
+    <div id="lErr" class="err"></div>
+    <a href="/">নতুন অ্যাকাউন্ট খুলতে হোম পেজে যান 👉</a>
+  </div>
+  <script>
+    async function doGateLogin(){
+      const email=document.getElementById('lEmail').value.trim();
+      const password=document.getElementById('lPass').value;
+      const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+      const d=await res.json();
+      if(d.success)window.location.reload();
+      else{const e=document.getElementById('lErr');e.style.display='block';e.textContent=d.message;}
+    }
+  </script>
+</body>
+</html>`;
+}
+
 // Security Headers Middleware
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -335,6 +425,7 @@ app.use(async (req, res, next) => {
         const effectiveDomain = host || bot.base_domain || detectedBase;
 
         if (req.path === '/catalog-builder' || (isDirectShopPath && segments[1] === 'catalog-builder')) {
+          if (!getLoggedInUser(req)) return res.status(401).send(generateLoginRequiredPage('ক্যাটালগ বিল্ডার লক'));
           return res.sendFile(path.join(__dirname, 'public', 'catalog_builder.html'));
         }
 
@@ -354,6 +445,22 @@ app.use(async (req, res, next) => {
         ) {
           const prods = await pool.query('SELECT * FROM bot_products WHERE bot_id = $1 ORDER BY id DESC', [bot.id]);
           return res.send(generateStorefrontView(bot, prods.rows, `${effectiveDomain}/${cleanSub}`, cleanSub, effectiveDomain));
+        }
+
+        // 🔒 ওনার ড্যাশবোর্ড (/dash/myshop) — অবশ্যই লগইন ও নিজস্ব মালিকানা থাকতে হবে
+        const authUser = getLoggedInUser(req);
+        const isAdmin = await isSuperAdminCookie(req);
+        if (!authUser && !isAdmin) {
+          return res.status(401).send(generateLoginRequiredPage('ড্যাশবোর্ড লক'));
+        }
+        if (!isAdmin && (!bot.user_id || bot.user_id !== authUser.id)) {
+          return res.status(403).send(`
+            <div style="font-family:'Hind Siliguri',sans-serif;text-align:center;padding:50px;background:#f1f5f9;min-height:100vh;">
+              <h2 style="color:#b91c1c;">⛔ অ্যাক্সেস অনুমোদিত নয়!</h2>
+              <p style="color:#475569;margin-top:8px;">এই ড্যাশবোর্ডটি আপনার অ্যাকাউন্টের নয়। অনুগ্রহ করে সঠিক অ্যাকাউন্ট দিয়ে লগইন করুন।</p>
+              <a href="/" style="display:inline-block;margin-top:16px;background:#059669;color:#fff;padding:10px 22px;border-radius:10px;text-decoration:none;font-weight:700;">হোম পেজে যান</a>
+            </div>
+          `);
         }
 
         const pNumRes = await pool.query("SELECT key, value FROM admin_settings WHERE key IN ('bkash_no', 'nagad_no', 'rocket_no')");
@@ -1783,8 +1890,8 @@ app.get('/api/public/stores', async (req, res) => {
   }
 });
 
-// 🔍 পাবলিক AI ওয়েবসাইট লিংক অ্যানালাইজার
-app.post('/api/public/analyze-site', async (req, res) => {
+// 🔍 AI ওয়েবসাইট লিংক অ্যানালাইজার (শুধু লগইনকৃত ইউজারদের জন্য)
+app.post('/api/public/analyze-site', requireUserAuth, async (req, res) => {
   try {
     const { website_url } = req.body;
     if (!website_url) return res.status(400).json({ success: false, message: 'ওয়েবসাইট লিংক দিন।' });
@@ -1795,19 +1902,24 @@ app.post('/api/public/analyze-site', async (req, res) => {
   }
 });
 
-// 📦 ক্যাটালগ সেভ করার API
-app.post('/api/catalog/save', async (req, res) => {
+// 📦 ক্যাটালগ সেভ করার API (লগইন ও মালিকানা সুরক্ষিত)
+app.post('/api/catalog/save', requireUserAuth, async (req, res) => {
   try {
     const { store_name, catalog_slug, admin_pin, items } = req.body;
     const cleanSlug = String(catalog_slug || '').toLowerCase().trim().replace(/[^a-z0-9-]/g, '');
 
     if (!cleanSlug) return res.status(400).json({ success: false, message: 'সঠিক স্লাগ কোড দিন।' });
 
+    const existCat = await pool.query('SELECT user_id FROM store_catalogs WHERE catalog_slug = $1', [cleanSlug]);
+    if (existCat.rows.length > 0 && existCat.rows[0].user_id && existCat.rows[0].user_id !== req.authUser.id) {
+      return res.status(403).json({ success: false, message: '⛔ এই ক্যাটালগ স্লাগটি অন্য একজন ইউজারের দখলে আছে! অন্য নাম দিন।' });
+    }
+
     await pool.query(
-      `INSERT INTO store_catalogs (catalog_slug, store_name, admin_pin)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (catalog_slug) DO UPDATE SET store_name = $2, admin_pin = COALESCE($3, store_catalogs.admin_pin)`,
-      [cleanSlug, store_name, admin_pin || '1234']
+      `INSERT INTO store_catalogs (user_id, catalog_slug, store_name, admin_pin)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (catalog_slug) DO UPDATE SET user_id = COALESCE(store_catalogs.user_id, $1), store_name = $3, admin_pin = COALESCE($4, store_catalogs.admin_pin)`,
+      [req.authUser.id, cleanSlug, store_name, admin_pin || '1234']
     );
 
     await pool.query('DELETE FROM store_catalog_items WHERE catalog_slug = $1', [cleanSlug]);
@@ -1835,7 +1947,7 @@ app.post('/api/catalog/save', async (req, res) => {
   }
 });
 
-app.get('/api/catalog/get/:slug', async (req, res) => {
+app.get('/api/catalog/get/:slug', requireUserAuth, async (req, res) => {
   try {
     const slug = req.params.slug.toLowerCase().trim();
     const cat = await pool.query('SELECT * FROM store_catalogs WHERE catalog_slug = $1', [slug]);
@@ -1853,7 +1965,10 @@ app.get('/api/catalog/get/:slug', async (req, res) => {
   }
 });
 
-app.get('/catalog-builder', (req, res) => res.sendFile(path.join(__dirname, 'public', 'catalog_builder.html')));
+app.get('/catalog-builder', (req, res) => {
+  if (!getLoggedInUser(req)) return res.status(401).send(generateLoginRequiredPage('ক্যাটালগ বিল্ডার লক'));
+  res.sendFile(path.join(__dirname, 'public', 'catalog_builder.html'));
+});
 
 // 🔗 প্রতিটি ক্যাটালগ পণ্যের আলাদা ডেডিকেটেড লিংক (/c/:slug/:id)
 app.get('/c/:slug/:id', async (req, res) => {
@@ -2900,6 +3015,7 @@ app.listen(PORT, '0.0.0.0', async () => {
       ALTER TABLE store_catalog_items ADD COLUMN IF NOT EXISTS image_url TEXT;
       ALTER TABLE store_catalog_items ADD COLUMN IF NOT EXISTS demo_images TEXT;
       ALTER TABLE store_catalogs ADD COLUMN IF NOT EXISTS admin_pin VARCHAR(20) DEFAULT '1234';
+      ALTER TABLE store_catalogs ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE CASCADE;
       ALTER TABLE bot_products ADD COLUMN IF NOT EXISTS image_url TEXT;
       ALTER TABLE bot_products ADD COLUMN IF NOT EXISTS regular_price NUMERIC(10, 2);
       ALTER TABLE bot_products ADD COLUMN IF NOT EXISTS demo_images TEXT;
